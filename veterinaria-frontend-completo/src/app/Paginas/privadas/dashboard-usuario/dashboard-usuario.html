@@ -1,0 +1,120 @@
+<!-- ==========================================================
+  VETERINARIA ARÉVALO · DASHBOARD USER
+  Menú, notificaciones y accesibilidad viven en LayoutPrivado.
+  Aquí solo mostramos datos del usuario desde Spring Boot.
+========================================================== -->
+<div class="dash-final dash-final--user">
+
+  <!-- Saludo + actualización -->
+  <header class="dash-final__encabezado">
+    <div>
+      <span class="dash-final__eyebrow">🐾 MI ESPACIO PERSONAL</span>
+      <h1>¡Bienvenido a Veterinaria Arévalo!</h1>
+      <p>Cuida a tus mejores amigos y consulta su información desde un solo lugar.</p>
+    </div>
+    <button type="button" class="dash-final__actualizar"
+            (click)="cargarResumen()" [disabled]="cargando">
+      {{ cargando ? 'Actualizando…' : '↻ Actualizar datos' }}
+    </button>
+  </header>
+
+  <!-- Banner: imagen separada del texto; no se superpone al ampliar la vista -->
+  <section class="dash-final__hero" aria-label="Bienvenida">
+    <div class="dash-final__hero-texto">
+      <span>♥ ELLOS TAMBIÉN SON FAMILIA</span>
+      <h2>Su bienestar es nuestra prioridad.</h2>
+      <p>Registra a tus mascotas, organiza las citas y mantén sus cuidados al día.</p>
+      <button type="button" (click)="irCitas()">📅 Ver mis citas</button>
+    </div>
+    <img src="/imagenes/mascotas-hero.webp" alt="" aria-hidden="true" loading="lazy">
+  </section>
+
+  <p class="dash-final__alerta" role="alert" *ngIf="errorCarga">
+    ⚠️ No se pudo cargar parte del resumen. Verifica que la API esté disponible.
+  </p>
+
+  <!-- Cada valor viene de las consultas existentes del componente TS -->
+  <section class="dash-final__indicadores" aria-label="Mi resumen">
+    <article class="dash-final__indicador">
+      <span class="dash-final__indicador-icono" aria-hidden="true">🐾</span>
+      <div><span>Mascotas registradas</span>
+      <strong>{{ totalMascotas === null ? '—' : totalMascotas }}</strong>
+      <small>Mis compañeros de vida</small></div>
+    </article>
+    <article class="dash-final__indicador">
+      <span class="dash-final__indicador-icono" aria-hidden="true">📅</span>
+      <div><span>Mis citas</span>
+      <strong>{{ totalCitas === null ? '—' : totalCitas }}</strong>
+      <small>Registradas en el sistema</small></div>
+    </article>
+    <article class="dash-final__indicador">
+      <span class="dash-final__indicador-icono" aria-hidden="true">⏳</span>
+      <div><span>Citas pendientes</span>
+      <strong>{{ citasPendientes === null ? '—' : citasPendientes }}</strong>
+      <small>En espera de confirmación</small></div>
+    </article>
+    <article class="dash-final__indicador">
+      <span class="dash-final__indicador-icono" aria-hidden="true">🩺</span>
+      <div><span>Servicios disponibles</span>
+      <strong>{{ totalServicios === null ? '—' : totalServicios }}</strong>
+      <small>Atención para tu mascota</small></div>
+    </article>
+  </section>
+
+  <div class="dash-final__columnas">
+    <!-- Próximas citas -->
+    <section class="dash-final__panel" aria-labelledby="titulo-citas-user">
+      <div class="dash-final__panel-head">
+        <div><h2 id="titulo-citas-user">📅 Próximas citas</h2>
+        <p>Las citas programadas para tus mascotas</p></div>
+        <button type="button" (click)="irCitas()">Ver todas →</button>
+      </div>
+      <p class="dash-final__vacio" *ngIf="cargando">Cargando citas…</p>
+      <p class="dash-final__vacio" *ngIf="!cargando && totalCitas === null">No se pudo consultar las citas.</p>
+      <p class="dash-final__vacio" *ngIf="!cargando && totalCitas !== null && proximasCitas.length === 0">No tienes próximas citas.</p>
+      <div class="dash-final__lista" *ngIf="!cargando && proximasCitas.length > 0">
+        <article class="dash-final__fila" *ngFor="let cita of proximasCitas">
+          <span class="dash-final__avatar" aria-hidden="true">📅</span>
+          <div class="dash-final__fila-texto">
+            <strong>{{ cita.mascota?.nombre || 'Mi mascota' }}</strong>
+            <span>{{ cita.servicio?.nombre || cita.motivo || 'Cita veterinaria' }}</span>
+            <small>{{ cita.fechaHora | date:'dd/MM/yyyy HH:mm' }}</small>
+          </div>
+          <span class="dash-final__estado" [class.dash-final__estado--pendiente]="cita.estado?.toUpperCase() === 'PENDIENTE'">
+            {{ cita.estado || 'Registrada' }}
+          </span>
+        </article>
+      </div>
+    </section>
+
+    <!-- Mascotas reales del usuario -->
+    <section class="dash-final__panel" aria-labelledby="titulo-mascotas-user">
+      <div class="dash-final__panel-head">
+        <div><h2 id="titulo-mascotas-user">🐾 Mis mascotas</h2>
+        <p>Tu familia de cuatro patas</p></div>
+        <button type="button" (click)="irMascotas()">Ver todas →</button>
+      </div>
+      <p class="dash-final__vacio" *ngIf="cargando">Cargando mascotas…</p>
+      <p class="dash-final__vacio" *ngIf="!cargando && totalMascotas === null">No se pudo consultar las mascotas.</p>
+      <p class="dash-final__vacio" *ngIf="!cargando && totalMascotas !== null && misMascotas.length === 0">Todavía no tienes mascotas registradas.</p>
+      <div class="dash-final__lista" *ngIf="!cargando && misMascotas.length > 0">
+        <article class="dash-final__fila" *ngFor="let mascota of misMascotas">
+          <span class="dash-final__avatar" aria-hidden="true">🐾</span>
+          <div class="dash-final__fila-texto">
+            <strong>{{ mascota.nombre || 'Mascota' }}</strong>
+            <span>{{ mascota.especie || 'Especie no especificada' }}</span>
+            <small>{{ mascota.raza || 'Raza no especificada' }}</small>
+          </div>
+          <span class="dash-final__etiqueta">Mi mascota</span>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <section class="dash-final__pie" aria-label="Información adicional">
+    <span>💚</span>
+    <div><strong>Pequeñas acciones, grandes historias.</strong>
+    <p>Consulta los profesionales disponibles y agenda una cita cuando la necesites.</p></div>
+    <button type="button" (click)="irVeterinarios()">Conocer veterinarios →</button>
+  </section>
+</div>

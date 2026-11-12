@@ -1,0 +1,57 @@
+VETERINARIA ARÉVALO – FRONTEND INTEGRADO (ANGULAR 22)
+==================================================
+
+CONTENIDO
+- Recuperación de contraseña: mostrar/ocultar los dos campos (nueva y confirmar).
+- Reenvío de código en registro y en recuperación (existía en la primera fase y se conserva).
+- Medicamentos: exportación CSV y PDF para ADMIN, usando las rutas del backend completo.
+- Panel de accesibilidad: selector ES/EN/FR/PT con traducciones de más de 200 textos y etiquetas habituales.
+- Se conserva el resto de funciones de accesibilidad (contraste, lectura en voz, escala, etc.).
+- Asistente IA: ventana de chat para roles autenticados, integrada con /api/asistente/chat.
+- Catálogo de veterinarios de clientes: vista más compacta (sin cambiar permisos del rol).
+- URL local: http://localhost:4200, API: http://localhost:8080/api.
+
+IMPORTANTE
+- La traducción incluye las principales pantallas, navegación y controles. Algunos textos secundarios,
+  alertas dinámicas o datos procedentes de la base se muestran en su idioma original.
+- El backend debe ser la versión completa que incluye los nuevos endpoints de IA y exportación.
+- NO pongas una API key de IA en Angular. Configúrala solo en el backend.
+- La IA requiere OPENAI_API_KEY y APP_AI_ENABLED=true en el backend. Tiene costos según uso.
+- El frontend NO decide qué cuenta Gmail envía correos. Configura spring.mail.username y
+  spring.mail.password en el backend y revisa si Gmail API/OAuth permanece activado.
+- La contraseña predeterminada del administrador debe cambiarse antes de publicar.
+- Producción usa la ruta relativa /api. Se debe configurar un proxy HTTPS hacia Spring Boot
+  (o actualizar la configuración de producción de forma coherente con CORS).
+
+PASOS DE INSTALACIÓN
+1. Descarga el ZIP y el archivo INSTALAR-FRONTEND-VETERINARIA.ps1 en Descargas.
+2. Cierra la PowerShell donde se ejecuta npm start con Ctrl+C.
+3. Abre una nueva PowerShell, sin privilegios de administrador.
+4. Ejecuta:
+   & "$HOME\Downloads\INSTALAR-FRONTEND-VETERINARIA.ps1"
+5. En la carpeta del proyecto ejecuta:
+   npm run build
+   npm start
+6. Verifica las funcionalidades con el backend encendido.
+
+RUTA DE WINDOWS
+C:\Users\Kevin\Desktop\Veterinaria Final\veterinaria-frontend-final-main\veterinaria-frontend-final-main
+
+ARCHIVOS QUE SE ACTUALIZAN
+El instalador reemplaza src y public sin borrar node_modules ni tocar el backend.
+Genera una copia de seguridad en el escritorio, fechada para poder restaurar.
+
+PRUEBAS SUGERIDAS
+1. Login y registro siguen funcionando con tus usuarios.
+2. Recuperar contraseña: botón del ojo para nueva y confirmación.
+3. Verificación: reenviar código con mensaje de confirmación.
+4. ADMIN -> medicamentos: exportar CSV y PDF. Deben abrirse correctamente.
+5. Panel de accesibilidad: cambiar a EN, FR, PT y ES. Probar navegación y recarga.
+6. Con usuario autenticado: consultar al asistente. Si está desactivado, aparece aviso.
+7. Confirmar que el correo se envía desde la cuenta configurada en el backend.
+
+VALIDACIÓN DE ESTA ENTREGA
+Se verificó la sintaxis de los archivos TypeScript con TypeScript.
+No se pudo ejecutar la compilación Angular completa en el entorno de entrega porque
+el acceso al registro de npm estaba temporalmente bloqueado. Ejecuta npm run build
+con las dependencias ya instaladas en tu PC para validar la integración.

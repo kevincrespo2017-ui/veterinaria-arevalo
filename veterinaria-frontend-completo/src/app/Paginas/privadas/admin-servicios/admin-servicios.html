@@ -1,0 +1,836 @@
+
+<!-- ==========================================================
+     VETERINARIA AREVALO
+     ADMINISTRACIÓN DE SERVICIOS (ADMIN)
+
+     CONTENIDO:
+     1. Cabecera administrativa.
+     2. Mensajes de éxito y error.
+     3. Resumen de servicios.
+     4. Formulario de creación y edición.
+     5. Búsqueda y ordenamiento.
+     6. Tarjetas de servicios.
+     7. Botones administrativos.
+
+     LayoutPrivado controla el menú lateral,
+     la campana y las opciones de accesibilidad.
+     ========================================================== -->
+
+<div class="servicios-container">
+
+
+  <!-- ========================================================
+       1. CABECERA PRINCIPAL
+       ======================================================== -->
+
+  <header class="servicios-header">
+
+    <div class="header-texto">
+
+      <span class="etiqueta-pagina">
+        PANEL ADMINISTRATIVO
+      </span>
+
+      <h1>
+        Administración de Servicios 🩺
+      </h1>
+
+      <p>
+        Registra, consulta y administra los servicios
+        disponibles en la veterinaria.
+      </p>
+
+    </div>
+
+
+    <!-- BOTONES DE CABECERA -->
+    <div class="acciones-header">
+
+      <button
+        type="button"
+        class="btn-nuevo"
+        (click)="nuevoServicio()"
+        [disabled]="cargando || hayOperacionEnCurso"
+      >
+        + Nuevo servicio
+      </button>
+
+      <button
+        type="button"
+        class="btn-volver"
+        (click)="volverDashboard()"
+      >
+        ← Volver al panel
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- ========================================================
+       ACCESOS RÁPIDOS ENTRE MÓDULOS ADMINISTRATIVOS
+       Los enlaces utilizan rutas ADMIN ya existentes.
+       ======================================================== -->
+  <nav class="admin-accesos" aria-label="Accesos rápidos administrativos">
+    <div class="admin-accesos__encabezado">
+      <span class="admin-accesos__icono" aria-hidden="true">⚡</span>
+      <div class="admin-accesos__texto">
+        <strong>Accesos rápidos</strong>
+        <small>Ingresa directamente a cualquier módulo de administración.</small>
+      </div>
+    </div>
+    <div class="admin-accesos__lista">
+      <a href="/admin/dashboard" class="admin-acceso">🏠 Inicio</a>
+      <a href="/admin/usuarios" class="admin-acceso">👥 Usuarios</a>
+      <a href="/admin/mascotas" class="admin-acceso">🐾 Mascotas</a>
+      <a href="/admin/citas" class="admin-acceso">📅 Citas</a>
+      <a href="/admin/atenciones" class="admin-acceso">🩺 Atenciones</a>
+      <a href="/admin/servicios" class="admin-acceso activo" aria-current="page">🛠️ Servicios</a>
+      <a href="/admin/veterinarios" class="admin-acceso">👨‍⚕️ Veterinarios</a>
+      <a href="/admin/medicamentos" class="admin-acceso">💊 Medicamentos</a>
+      <a href="/admin/facturas" class="admin-acceso">🧾 Facturas</a>
+    </div>
+  </nav>
+
+
+  <!-- ========================================================
+       2. MENSAJES DEL SISTEMA
+       ======================================================== -->
+
+  <!-- OPERACIÓN REALIZADA CORRECTAMENTE -->
+  <div
+    class="mensaje-exito"
+    *ngIf="mensajeExito"
+    role="status"
+    aria-live="polite"
+  >
+    ✅ {{ mensajeExito }}
+  </div>
+
+
+  <!-- ERROR DE CONSULTA O MODIFICACIÓN -->
+  <div
+    class="mensaje-error"
+    *ngIf="mensajeError"
+    role="alert"
+  >
+
+    ⚠️ {{ mensajeError }}
+
+    <button
+      type="button"
+      class="btn-reintentar"
+      *ngIf="errorCarga"
+      (click)="cargarServicios()"
+    >
+      Reintentar
+    </button>
+
+  </div>
+
+
+  <!-- ========================================================
+       3. RESUMEN GENERAL
+       ======================================================== -->
+
+  <!--
+    Solo mostramos el total de servicios
+    para mantener una interfaz sencilla.
+  -->
+
+  <section
+    class="resumen-grid"
+    *ngIf="!cargando && !errorCarga"
+    aria-label="Resumen de servicios veterinarios"
+  >
+
+    <article class="resumen-card">
+
+      <div
+        class="resumen-icono"
+        aria-hidden="true"
+      >
+        🩺
+      </div>
+
+      <div class="resumen-datos">
+
+        <span>
+          Total de servicios registrados
+        </span>
+
+        <strong>
+          {{ totalServicios }}
+        </strong>
+
+      </div>
+
+    </article>
+
+  </section>
+
+
+  <!-- ========================================================
+       4. FORMULARIO DE SERVICIO
+       ======================================================== -->
+
+  <!--
+    Este formulario permite:
+    - Crear un servicio nuevo.
+    - Editar un servicio existente.
+
+    servicioEditandoId === null:
+    CREATE / POST.
+
+    servicioEditandoId !== null:
+    UPDATE / PUT.
+  -->
+
+  <section
+    class="formulario-card"
+    *ngIf="mostrarFormulario"
+    aria-labelledby="titulo-formulario"
+  >
+
+    <!-- ENCABEZADO DEL FORMULARIO -->
+    <div class="formulario-header">
+
+      <div
+        class="formulario-icono"
+        aria-hidden="true"
+      >
+        {{ servicioEditandoId === null ? '🩺' : '✏️' }}
+      </div>
+
+      <div>
+
+        <h2 id="titulo-formulario">
+
+          {{
+            servicioEditandoId === null
+              ? 'Registrar nuevo servicio'
+              : 'Editar servicio'
+          }}
+
+        </h2>
+
+        <p>
+          Completa los datos del servicio veterinario.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         FORMULARIO REACTIVO
+         ====================================================== -->
+
+    <form
+      [formGroup]="servicioForm"
+      (ngSubmit)="guardarServicio()"
+      novalidate
+      [attr.aria-busy]="guardando"
+    >
+
+      <fieldset
+        class="campos-formulario"
+        [disabled]="guardando"
+      >
+
+        <legend class="solo-lectores">
+          Información del servicio veterinario
+        </legend>
+
+
+        <div class="form-grid">
+
+
+          <!-- ================================================
+               NOMBRE DEL SERVICIO
+               ================================================ -->
+
+          <div class="form-group campo-ancho">
+
+            <label for="nombreServicioAdmin">
+
+              Nombre del servicio
+
+              <span
+                class="obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+
+            </label>
+
+
+            <input
+              #campoNombre
+              id="nombreServicioAdmin"
+              type="text"
+              formControlName="nombre"
+              placeholder="Ejemplo: Consulta veterinaria"
+              autocomplete="off"
+              required
+              [class.input-error]="campoInvalido('nombre')"
+              [attr.aria-invalid]="campoInvalido('nombre')"
+              [attr.aria-describedby]="
+                campoInvalido('nombre')
+                  ? 'error-nombre-servicio'
+                  : null
+              "
+            >
+
+
+            <small
+              id="error-nombre-servicio"
+              class="error-validacion"
+              *ngIf="campoInvalido('nombre')"
+            >
+              El nombre del servicio es obligatorio.
+            </small>
+
+          </div>
+
+
+          <!-- ================================================
+               DESCRIPCIÓN
+               ================================================ -->
+
+          <div class="form-group campo-ancho">
+
+            <label for="descripcionServicioAdmin">
+
+              Descripción
+
+              <span
+                class="obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+
+            </label>
+
+
+            <textarea
+              id="descripcionServicioAdmin"
+              rows="4"
+              formControlName="descripcion"
+              placeholder="Describe en qué consiste el servicio"
+              required
+              [class.input-error]="campoInvalido('descripcion')"
+              [attr.aria-invalid]="campoInvalido('descripcion')"
+              [attr.aria-describedby]="
+                campoInvalido('descripcion')
+                  ? 'error-descripcion-servicio'
+                  : null
+              "
+            ></textarea>
+
+
+            <small
+              id="error-descripcion-servicio"
+              class="error-validacion"
+              *ngIf="campoInvalido('descripcion')"
+            >
+              La descripción del servicio es obligatoria.
+            </small>
+
+          </div>
+
+
+          <!-- ================================================
+               PRECIO
+               ================================================ -->
+
+          <div class="form-group campo-precio">
+
+            <label for="precioServicioAdmin">
+
+              Precio en dólares (USD)
+
+              <span
+                class="obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+
+            </label>
+
+
+            <input
+              id="precioServicioAdmin"
+              type="number"
+              min="0.01"
+              step="0.01"
+              formControlName="precio"
+              placeholder="Ejemplo: 20.00"
+              required
+              [class.input-error]="campoInvalido('precio')"
+              [attr.aria-invalid]="campoInvalido('precio')"
+              [attr.aria-describedby]="
+                campoInvalido('precio')
+                  ? 'error-precio-servicio'
+                  : 'ayuda-precio-servicio'
+              "
+            >
+
+
+            <small
+              id="ayuda-precio-servicio"
+              class="texto-ayuda"
+            >
+              Ingresa un valor mayor que cero.
+            </small>
+
+
+            <!-- ERRORES DEL PRECIO -->
+            <small
+              id="error-precio-servicio"
+              class="error-validacion"
+              *ngIf="campoInvalido('precio')"
+            >
+
+              <span
+                *ngIf="
+                  servicioForm.get('precio')?.hasError('required')
+                "
+              >
+                El precio es obligatorio.
+              </span>
+
+              <span
+                *ngIf="
+                  servicioForm.get('precio')?.hasError('min')
+                "
+              >
+                El precio debe ser mayor que cero.
+              </span>
+
+            </small>
+
+          </div>
+
+
+        </div>
+
+      </fieldset>
+
+
+      <!-- ====================================================
+           BOTONES DEL FORMULARIO
+           ==================================================== -->
+
+      <div class="form-acciones">
+
+        <!-- GUARDAR -->
+        <button
+          type="submit"
+          class="btn-guardar"
+          [disabled]="guardando"
+        >
+
+          {{
+            guardando
+              ? 'Guardando servicio...'
+              : servicioEditandoId === null
+                ? 'Crear servicio'
+                : 'Guardar cambios'
+          }}
+
+        </button>
+
+
+        <!-- CANCELAR EDICIÓN O REGISTRO -->
+        <button
+          type="button"
+          class="btn-cancelar"
+          [disabled]="guardando"
+          (click)="cerrarFormulario()"
+        >
+          Cancelar
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+
+  <!-- ========================================================
+       5. ENCABEZADO DEL LISTADO
+       ======================================================== -->
+
+  <section
+    class="listado-section"
+    aria-labelledby="titulo-listado-servicios"
+  >
+
+    <div class="listado-header">
+
+      <div>
+
+        <h2 id="titulo-listado-servicios">
+          Servicios registrados
+        </h2>
+
+        <p>
+          Consulta los tratamientos y servicios
+          disponibles en la clínica.
+        </p>
+
+      </div>
+
+
+      <!-- CONTADOR Y ACTUALIZACIÓN -->
+      <div class="listado-acciones">
+
+        <span
+          class="total-registros"
+          *ngIf="!cargando && !errorCarga"
+        >
+
+          {{ servicios.length }}
+
+          {{
+            servicios.length === 1
+              ? 'servicio'
+              : 'servicios'
+          }}
+
+        </span>
+
+
+        <button
+          type="button"
+          class="btn-actualizar"
+          (click)="cargarServicios(true)"
+          [disabled]="cargando || hayOperacionEnCurso"
+        >
+
+          {{
+            cargando
+              ? 'Consultando...'
+              : '↻ Actualizar'
+          }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         6. BUSCADOR Y ORDENAMIENTO
+         ====================================================== -->
+
+    <div
+      class="filtros-card"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        servicios.length > 0
+      "
+    >
+
+      <!-- BUSCADOR -->
+      <div class="filtro-grupo">
+
+        <label for="buscarServicioAdmin">
+          Buscar servicio
+        </label>
+
+
+        <input
+          id="buscarServicioAdmin"
+          type="search"
+          [(ngModel)]="busqueda"
+          placeholder="Ejemplo: consulta o vacunación"
+          autocomplete="off"
+          aria-describedby="ayuda-busqueda-servicios"
+        >
+
+
+        <small
+          id="ayuda-busqueda-servicios"
+          class="texto-ayuda"
+        >
+          Puedes buscar por nombre o descripción.
+        </small>
+
+      </div>
+
+
+      <!-- ORDENAMIENTO -->
+      <div class="filtro-grupo">
+
+        <label for="ordenarServiciosAdmin">
+          Ordenar servicios
+        </label>
+
+
+        <select
+          id="ordenarServiciosAdmin"
+          [(ngModel)]="ordenarPor"
+        >
+
+          <option value="nombreAsc">
+            Nombre (A-Z)
+          </option>
+
+          <option value="nombreDesc">
+            Nombre (Z-A)
+          </option>
+
+          <option value="precioAsc">
+            Menor precio primero
+          </option>
+
+          <option value="precioDesc">
+            Mayor precio primero
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         7. CARGANDO
+         ====================================================== -->
+
+    <div
+      class="mensaje-info"
+      *ngIf="cargando"
+      role="status"
+      aria-live="polite"
+    >
+      Consultando los servicios registrados...
+    </div>
+
+
+    <!-- ======================================================
+         8. SIN SERVICIOS
+         ====================================================== -->
+
+    <div
+      class="sin-servicios"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        servicios.length === 0
+      "
+    >
+
+      <div
+        class="sin-icono"
+        aria-hidden="true"
+      >
+        🩺
+      </div>
+
+
+      <h3>
+        No hay servicios registrados
+      </h3>
+
+
+      <p>
+        Todavía no existen servicios veterinarios
+        registrados en el sistema.
+      </p>
+
+
+      <button
+        type="button"
+        class="btn-nuevo"
+        (click)="nuevoServicio()"
+      >
+        + Registrar primer servicio
+      </button>
+
+    </div>
+
+
+    <!-- ======================================================
+         9. SIN RESULTADOS DE BÚSQUEDA
+         ====================================================== -->
+
+    <div
+      class="sin-resultados"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        servicios.length > 0 &&
+        serviciosFiltrados.length === 0
+      "
+    >
+
+      <div
+        class="sin-icono"
+        aria-hidden="true"
+      >
+        🔎
+      </div>
+
+
+      <h3>
+        No encontramos servicios
+      </h3>
+
+
+      <p>
+        Prueba con otro nombre o descripción.
+      </p>
+
+
+      <button
+        type="button"
+        class="btn-limpiar"
+        (click)="limpiarFiltros()"
+      >
+        Limpiar filtros
+      </button>
+
+    </div>
+
+
+    <!-- ======================================================
+         10. LISTADO DE SERVICIOS
+         ====================================================== -->
+
+    <div
+      class="servicios-grid"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        serviciosFiltrados.length > 0
+      "
+    >
+
+
+      <!-- TARJETA INDIVIDUAL -->
+      <article
+        class="servicio-card"
+        *ngFor="
+          let servicio of serviciosFiltrados;
+          trackBy: trackByServicio
+        "
+        [attr.aria-busy]="eliminandoId === servicio.id"
+      >
+
+
+        <!-- ================================================
+             CABECERA DE TARJETA
+             ================================================ -->
+
+        <div class="tarjeta-superior">
+
+          <div
+            class="servicio-icono"
+            aria-hidden="true"
+          >
+            🩺
+          </div>
+
+
+          <span class="etiqueta-servicio">
+            Servicio veterinario
+          </span>
+
+        </div>
+
+
+        <!-- NOMBRE DEL SERVICIO -->
+        <h3 class="nombre-servicio">
+          {{ servicio.nombre }}
+        </h3>
+
+
+        <!-- DESCRIPCIÓN -->
+        <p class="descripcion">
+          {{
+            servicio.descripcion ||
+            'Sin descripción registrada.'
+          }}
+        </p>
+
+
+        <!-- ================================================
+             PRECIO
+             ================================================ -->
+
+        <div class="precio-box">
+
+          <span>
+            Precio del servicio
+          </span>
+
+          <strong>
+            {{
+              servicio.precio
+                | currency:'USD':'symbol':'1.2-2'
+            }}
+          </strong>
+
+        </div>
+
+
+        <!-- ================================================
+             ACCIONES ADMINISTRATIVAS
+             ================================================ -->
+
+        <div class="acciones-card">
+
+
+          <!-- EDITAR -->
+          <button
+            type="button"
+            class="btn-editar"
+            (click)="editarServicio(servicio)"
+            [disabled]="cargando || hayOperacionEnCurso"
+            [attr.aria-label]="
+              'Editar servicio ' + servicio.nombre
+            "
+          >
+            ✏️ Editar
+          </button>
+
+
+          <!-- ELIMINAR -->
+          <button
+            type="button"
+            class="btn-eliminar"
+            (click)="eliminarServicio(servicio)"
+            [disabled]="cargando || hayOperacionEnCurso"
+            [attr.aria-label]="
+              'Eliminar servicio ' + servicio.nombre
+            "
+          >
+
+            {{
+              eliminandoId === servicio.id
+                ? 'Eliminando...'
+                : '🗑 Eliminar'
+            }}
+
+          </button>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</div>

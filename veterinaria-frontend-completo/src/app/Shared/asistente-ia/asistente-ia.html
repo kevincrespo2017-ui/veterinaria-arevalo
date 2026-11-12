@@ -1,0 +1,145 @@
+
+<div class="asistente-widget">
+
+  <!-- BOTÓN COMPACTO DEL ASISTENTE -->
+  <button
+    type="button"
+    class="asistente-flotante"
+    (click)="alternar()"
+    [attr.aria-expanded]="abierto"
+    aria-controls="asistente-panel"
+    [attr.aria-label]="abierto ? 'Cerrar asistente virtual' : 'Abrir asistente virtual'"
+    title="Asistente virtual">
+
+    <span aria-hidden="true">🤖</span>
+
+  </button>
+
+  <!-- VENTANA DEL CHAT -->
+  <section
+    *ngIf="abierto"
+    #panel
+    id="asistente-panel"
+    class="asistente-panel"
+    role="region"
+    aria-label="Asistente de Veterinaria Arévalo">
+
+    <!-- CABECERA -->
+    <header class="asistente-cabecera">
+
+      <div class="asistente-avatar" aria-hidden="true">
+        🐾
+      </div>
+
+      <div>
+        <strong>Ayuda de Veterinaria Arévalo</strong>
+        <small>Asistente virtual con IA</small>
+      </div>
+
+      <button
+        type="button"
+        class="asistente-cerrar"
+        (click)="cerrar()"
+        aria-label="Cerrar asistente">
+        ✕
+      </button>
+
+    </header>
+
+    <!-- MENSAJES -->
+    <div
+      class="asistente-mensajes"
+      aria-live="polite"
+      aria-relevant="additions text">
+
+      <div
+        *ngFor="let mensaje of mensajes"
+        class="asistente-mensaje"
+        [class.asistente-mensaje--usuario]="mensaje.autor === 'usuario'"
+        [class.asistente-mensaje--bot]="mensaje.autor === 'asistente'">
+
+        <span class="asistente-autor">
+          {{ mensaje.autor === 'usuario' ? 'Tú' : 'Asistente' }}
+        </span>
+
+        <p class="no-traducir">
+          {{ mensaje.texto }}
+        </p>
+
+      </div>
+
+      <p
+        *ngIf="cargando"
+        class="asistente-pensando"
+        role="status">
+        Preparando respuesta…
+      </p>
+
+    </div>
+
+    <!-- PREGUNTAS SUGERIDAS -->
+    <div
+      class="asistente-sugerencias"
+      *ngIf="mensajes.length === 1">
+
+      <button
+        type="button"
+        (click)="sugerir('¿Cómo agendo una cita?')">
+        Agendar cita
+      </button>
+
+      <button
+        type="button"
+        (click)="sugerir('¿Cómo recupero mi contraseña?')">
+        Recuperar cuenta
+      </button>
+
+    </div>
+
+    <!-- MENSAJES DE ERROR -->
+    <p
+      *ngIf="error"
+      class="asistente-error"
+      role="alert">
+      {{ error }}
+    </p>
+
+    <!-- CAMPO PARA ESCRIBIR -->
+    <form
+      class="asistente-componer"
+      (ngSubmit)="enviar()">
+
+      <label
+        for="asistente-pregunta"
+        class="asistente-etiqueta">
+        Escribe tu pregunta
+      </label>
+
+      <textarea
+        id="asistente-pregunta"
+        rows="2"
+        maxlength="2000"
+        [(ngModel)]="pregunta"
+        name="pregunta"
+        (keydown)="alPresionar($event)"
+        [disabled]="cargando"
+        placeholder="¿En qué puedo ayudarte?">
+      </textarea>
+
+      <button
+        type="submit"
+        [disabled]="cargando || !pregunta.trim()">
+        Enviar
+      </button>
+
+    </form>
+
+    <!-- AVISO -->
+    <p class="asistente-aviso">
+      Información general. Si tu mascota tiene una emergencia,
+      acude a un veterinario.
+    </p>
+
+  </section>
+
+</div>

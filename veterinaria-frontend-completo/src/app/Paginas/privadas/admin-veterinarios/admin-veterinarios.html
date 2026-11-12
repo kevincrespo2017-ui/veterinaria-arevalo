@@ -1,0 +1,1096 @@
+
+<!-- ==========================================================
+     VETERINARIA ARÉVALO
+     ADMINISTRACIÓN DE VETERINARIOS
+
+     FUNCIONES:
+     1. Consultar profesionales.
+     2. Registrar desde una cuenta existente.
+     3. Mostrar cuentas disponibles.
+     4. Editar datos profesionales.
+     5. Buscar y filtrar.
+     6. Eliminar con protección del backend.
+
+     El menú, la campana y la accesibilidad global
+     pertenecen a LayoutPrivado.
+========================================================== -->
+
+<div class="veterinarios-container">
+
+  <!-- ========================================================
+       1. ENCABEZADO
+  ========================================================= -->
+
+  <header class="veterinarios-header">
+
+    <div class="header-texto">
+
+      <span class="etiqueta-pagina">
+        PANEL ADMINISTRATIVO
+      </span>
+
+      <h1>
+        Administración de Veterinarios 👨‍⚕️
+      </h1>
+
+      <p>
+        Asigna cuentas existentes, registra especialidades
+        y administra los profesionales de la clínica.
+      </p>
+
+    </div>
+
+    <div class="acciones-header">
+
+      <button
+        type="button"
+        class="btn-nuevo"
+        (click)="nuevoVeterinario()"
+        [disabled]="cargando || hayOperacionEnCurso">
+
+        + Nuevo veterinario
+
+      </button>
+
+      <button
+        type="button"
+        class="btn-volver"
+        (click)="volverDashboard()">
+
+        ← Volver al panel
+
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- ========================================================
+       ACCESOS RÁPIDOS ENTRE MÓDULOS ADMINISTRATIVOS
+       Los enlaces utilizan rutas ADMIN ya existentes.
+       ======================================================== -->
+  <nav class="admin-accesos" aria-label="Accesos rápidos administrativos">
+    <div class="admin-accesos__encabezado">
+      <span class="admin-accesos__icono" aria-hidden="true">⚡</span>
+      <div class="admin-accesos__texto">
+        <strong>Accesos rápidos</strong>
+        <small>Ingresa directamente a cualquier módulo de administración.</small>
+      </div>
+    </div>
+    <div class="admin-accesos__lista">
+      <a href="/admin/dashboard" class="admin-acceso">🏠 Inicio</a>
+      <a href="/admin/usuarios" class="admin-acceso">👥 Usuarios</a>
+      <a href="/admin/mascotas" class="admin-acceso">🐾 Mascotas</a>
+      <a href="/admin/citas" class="admin-acceso">📅 Citas</a>
+      <a href="/admin/atenciones" class="admin-acceso">🩺 Atenciones</a>
+      <a href="/admin/servicios" class="admin-acceso">🛠️ Servicios</a>
+      <a href="/admin/veterinarios" class="admin-acceso activo" aria-current="page">👨‍⚕️ Veterinarios</a>
+      <a href="/admin/medicamentos" class="admin-acceso">💊 Medicamentos</a>
+      <a href="/admin/facturas" class="admin-acceso">🧾 Facturas</a>
+    </div>
+  </nav>
+
+
+  <!-- ========================================================
+       2. MENSAJE DE ÉXITO
+  ========================================================= -->
+
+  <div
+    class="mensaje-exito"
+    *ngIf="mensajeExito"
+    role="status"
+    aria-live="polite">
+
+    ✅ {{ mensajeExito }}
+
+  </div>
+
+
+  <!-- ========================================================
+       3. MENSAJE DE ERROR
+  ========================================================= -->
+
+  <div
+    class="mensaje-error"
+    *ngIf="mensajeError"
+    role="alert">
+
+    ⚠️ {{ mensajeError }}
+
+  </div>
+
+
+  <!-- ========================================================
+       4. RESUMEN
+  ========================================================= -->
+
+  <section
+    class="resumen-grid"
+    *ngIf="!cargando && !errorCarga"
+    aria-label="Resumen de profesionales">
+
+    <article class="resumen-card">
+
+      <div
+        class="resumen-icono"
+        aria-hidden="true">
+
+        👨‍⚕️
+
+      </div>
+
+      <div class="resumen-datos">
+
+        <span>
+          Total de veterinarios registrados
+        </span>
+
+        <strong>
+          {{ totalVeterinarios }}
+        </strong>
+
+      </div>
+
+    </article>
+
+  </section>
+
+
+  <!-- ========================================================
+       5. FORMULARIO DE REGISTRO Y EDICIÓN
+  ========================================================= -->
+
+  <section
+    class="formulario-card"
+    *ngIf="mostrarFormulario"
+    aria-labelledby="titulo-formulario">
+
+    <div class="formulario-header">
+
+      <div
+        class="formulario-icono"
+        aria-hidden="true">
+
+        {{
+          veterinarioEditandoId === null
+            ? '👨‍⚕️'
+            : '✏️'
+        }}
+
+      </div>
+
+      <div>
+
+        <h2 id="titulo-formulario">
+
+          {{
+            veterinarioEditandoId === null
+              ? 'Asignar nuevo veterinario'
+              : 'Editar datos profesionales'
+          }}
+
+        </h2>
+
+        <p>
+
+          {{
+            veterinarioEditandoId === null
+              ? 'Selecciona una cuenta registrada y completa sus datos profesionales.'
+              : 'Modifica los datos profesionales sin cambiar la cuenta vinculada.'
+          }}
+
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         5.1. FORMULARIO REACTIVO
+    ======================================================= -->
+
+    <form
+      [formGroup]="veterinarioForm"
+      (ngSubmit)="guardarVeterinario()"
+      novalidate
+      [attr.aria-busy]="guardando">
+
+      <fieldset
+        class="campos-formulario"
+        [disabled]="guardando">
+
+        <legend class="solo-lectores">
+          Información del veterinario
+        </legend>
+
+        <div class="form-grid">
+
+
+          <!-- ================================================
+               5.2. SELECCIONAR USUARIO EXISTENTE
+          ================================================= -->
+
+          <ng-container
+            *ngIf="veterinarioEditandoId === null">
+
+            <div class="form-group form-group-completa">
+
+              <label for="usuarioVeterinarioAdmin">
+
+                Cuenta de usuario existente
+
+                <span
+                  class="obligatorio"
+                  aria-hidden="true">
+
+                  *
+
+                </span>
+
+              </label>
+
+              <select
+                #campoUsuario
+                id="usuarioVeterinarioAdmin"
+                formControlName="usuarioId"
+                required
+                [disabled]="cargandoUsuarios"
+                [class.input-error]="campoInvalido('usuarioId')"
+                [attr.aria-invalid]="campoInvalido('usuarioId')"
+                aria-describedby="ayuda-usuario-veterinario">
+
+                <option [ngValue]="null">
+
+                  Selecciona una cuenta...
+
+                </option>
+
+                <option
+                  *ngFor="let usuario of usuariosElegibles"
+                  [ngValue]="usuario.id">
+
+                  {{ usuario.nombre || 'Usuario' }}
+                  — {{ usuario.correo }}
+
+                </option>
+
+              </select>
+
+              <small
+                id="ayuda-usuario-veterinario"
+                class="texto-ayuda">
+
+                Solo aparecen cuentas con correo verificado
+                y rol USER, pendientes o aprobadas.
+
+              </small>
+
+              <small
+                class="error-validacion"
+                *ngIf="campoInvalido('usuarioId')">
+
+                Debes seleccionar una cuenta de usuario.
+
+              </small>
+
+            </div>
+
+
+            <!-- CARGANDO USUARIOS -->
+
+            <div
+              class="mensaje-info form-group-completa"
+              *ngIf="cargandoUsuarios"
+              role="status"
+              aria-live="polite">
+
+              Consultando cuentas disponibles...
+
+            </div>
+
+
+            <!-- ERROR DE CONSULTA DE USUARIOS -->
+
+            <div
+              class="mensaje-error form-group-completa"
+              *ngIf="errorUsuarios"
+              role="alert">
+
+              No se pudieron consultar las cuentas.
+
+              <button
+                type="button"
+                class="btn-reintentar"
+                (click)="cargarUsuariosDisponibles()">
+
+                Reintentar
+
+              </button>
+
+            </div>
+
+
+            <!-- NO EXISTEN CUENTAS DISPONIBLES -->
+
+            <div
+              class="sin-resultados form-group-completa"
+              *ngIf="
+                !cargandoUsuarios &&
+                !errorUsuarios &&
+                usuariosElegibles.length === 0
+              ">
+
+              <div
+                class="sin-icono"
+                aria-hidden="true">
+
+                👥
+
+              </div>
+
+              <h3>
+                No hay cuentas disponibles
+              </h3>
+
+              <p>
+
+                Primero debe existir un usuario registrado
+                que haya verificado su correo electrónico.
+
+              </p>
+
+              <button
+                type="button"
+                class="btn-actualizar"
+                (click)="cargarUsuariosDisponibles()">
+
+                ↻ Consultar nuevamente
+
+              </button>
+
+            </div>
+
+
+            <!-- INFORMACIÓN DE LA CUENTA SELECCIONADA -->
+
+            <div
+              class="cuenta-seleccionada form-group-completa"
+              *ngIf="usuarioSeleccionado as usuario">
+
+              <span
+                class="cuenta-seleccionada__icono"
+                aria-hidden="true">
+
+                👤
+
+              </span>
+
+              <div>
+
+                <strong>
+                  {{ usuario.nombre }}
+                </strong>
+
+                <span>
+                  {{ usuario.correo }}
+                </span>
+
+                <small>
+                  Estado: {{ usuario.estado }}
+                </small>
+
+              </div>
+
+              <span class="cuenta-seleccionada__estado">
+                Cuenta seleccionada
+              </span>
+
+            </div>
+
+          </ng-container>
+
+
+          <!-- ================================================
+               5.3. INFORMACIÓN DE LA CUENTA AL EDITAR
+          ================================================= -->
+
+          <div
+            class="cuenta-seleccionada form-group-completa"
+            *ngIf="
+              veterinarioEditandoId !== null &&
+              veterinarioEditando
+            ">
+
+            <span
+              class="cuenta-seleccionada__icono"
+              aria-hidden="true">
+
+              👤
+
+            </span>
+
+            <div>
+
+              <strong>
+                {{ veterinarioEditando.nombre }}
+                {{ veterinarioEditando.apellido || '' }}
+              </strong>
+
+              <span>
+                {{ veterinarioEditando.email }}
+              </span>
+
+              <small>
+                La cuenta vinculada se conserva sin cambios.
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <!-- ================================================
+               5.4. CÉDULA
+          ================================================= -->
+
+          <div class="form-group">
+
+            <label for="cedulaVeterinarioAdmin">
+
+              Cédula
+
+              <span
+                class="obligatorio"
+                aria-hidden="true">
+
+                *
+
+              </span>
+
+            </label>
+
+            <input
+              #campoCedula
+              id="cedulaVeterinarioAdmin"
+              type="text"
+              inputmode="numeric"
+              maxlength="10"
+              formControlName="cedula"
+              placeholder="0102030405"
+              autocomplete="off"
+              required
+              [class.input-error]="campoInvalido('cedula')"
+              [attr.aria-invalid]="campoInvalido('cedula')"
+              aria-describedby="ayuda-cedula">
+
+            <small
+              id="ayuda-cedula"
+              class="texto-ayuda">
+
+              Exactamente 10 dígitos numéricos.
+
+            </small>
+
+            <small
+              class="error-validacion"
+              *ngIf="campoInvalido('cedula')">
+
+              <span
+                *ngIf="veterinarioForm.get('cedula')?.hasError('required')">
+
+                La cédula es obligatoria.
+
+              </span>
+
+              <span
+                *ngIf="veterinarioForm.get('cedula')?.hasError('pattern')">
+
+                La cédula debe contener 10 números.
+
+              </span>
+
+            </small>
+
+          </div>
+
+
+          <!-- ================================================
+               5.5. ESPECIALIDAD
+          ================================================= -->
+
+          <div class="form-group">
+
+            <label for="especialidadVeterinarioAdmin">
+
+              Especialidad
+
+              <span
+                class="obligatorio"
+                aria-hidden="true">
+
+                *
+
+              </span>
+
+            </label>
+
+            <input
+              id="especialidadVeterinarioAdmin"
+              type="text"
+              formControlName="especialidad"
+              placeholder="Medicina general"
+              required
+              [class.input-error]="campoInvalido('especialidad')"
+              [attr.aria-invalid]="campoInvalido('especialidad')">
+
+            <small
+              class="error-validacion"
+              *ngIf="campoInvalido('especialidad')">
+
+              La especialidad es obligatoria.
+
+            </small>
+
+          </div>
+
+
+          <!-- ================================================
+               5.6. TELÉFONO
+          ================================================= -->
+
+          <div class="form-group">
+
+            <label for="telefonoVeterinarioAdmin">
+
+              Teléfono
+
+              <span
+                class="obligatorio"
+                aria-hidden="true">
+
+                *
+
+              </span>
+
+            </label>
+
+            <input
+              id="telefonoVeterinarioAdmin"
+              type="tel"
+              inputmode="tel"
+              formControlName="telefono"
+              placeholder="0991234567"
+              autocomplete="tel"
+              required
+              [class.input-error]="campoInvalido('telefono')"
+              [attr.aria-invalid]="campoInvalido('telefono')">
+
+            <small
+              class="error-validacion"
+              *ngIf="campoInvalido('telefono')">
+
+              El teléfono es obligatorio.
+
+            </small>
+
+          </div>
+
+        </div>
+
+      </fieldset>
+
+
+      <!-- ====================================================
+           5.7. EXPLICACIÓN DEL REGISTRO
+      ===================================================== -->
+
+      <div
+        class="nota-vinculacion"
+        *ngIf="veterinarioEditandoId === null">
+
+        <strong>
+          ¿Qué sucederá al registrar?
+        </strong>
+
+        <p>
+
+          Se vinculará la cuenta seleccionada,
+          se creará su ficha profesional y el sistema
+          le asignará automáticamente el rol VETERINARIO.
+
+          Su correo y contraseña originales se conservarán.
+
+        </p>
+
+      </div>
+
+
+      <!-- ====================================================
+           5.8. BOTONES
+      ===================================================== -->
+
+      <div class="form-acciones">
+
+        <button
+          type="submit"
+          class="btn-guardar"
+          [disabled]="
+            guardando ||
+            (
+              veterinarioEditandoId === null &&
+              (
+                cargandoUsuarios ||
+                usuariosElegibles.length === 0
+              )
+            )
+          ">
+
+          {{
+            guardando
+              ? 'Procesando...'
+              : veterinarioEditandoId === null
+                ? 'Asignar veterinario'
+                : 'Guardar cambios'
+          }}
+
+        </button>
+
+        <button
+          type="button"
+          class="btn-cancelar"
+          (click)="cerrarFormulario()"
+          [disabled]="guardando">
+
+          Cancelar
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+
+  <!-- ========================================================
+       6. LISTADO DE PROFESIONALES
+  ========================================================= -->
+
+  <section
+    class="listado-section"
+    aria-labelledby="titulo-listado-veterinarios">
+
+    <div class="listado-header">
+
+      <div>
+
+        <h2 id="titulo-listado-veterinarios">
+          Veterinarios registrados
+        </h2>
+
+        <p>
+          Consulta y administra las fichas profesionales.
+        </p>
+
+      </div>
+
+      <div class="listado-acciones">
+
+        <span
+          class="total-registros"
+          *ngIf="!cargando && !errorCarga">
+
+          {{ totalVeterinarios }}
+
+          {{ totalVeterinarios === 1
+              ? 'veterinario'
+              : 'veterinarios' }}
+
+        </span>
+
+        <button
+          type="button"
+          class="btn-actualizar"
+          (click)="cargarVeterinarios(true)"
+          [disabled]="cargando || hayOperacionEnCurso">
+
+          {{ cargando ? 'Consultando...' : '↻ Actualizar' }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         7. ERROR DE CONSULTA
+    ======================================================= -->
+
+    <div
+      class="mensaje-error"
+      *ngIf="errorCarga"
+      role="alert">
+
+      No se pudo cargar el listado.
+
+      <button
+        type="button"
+        class="btn-reintentar"
+        (click)="cargarVeterinarios()">
+
+        Reintentar
+
+      </button>
+
+    </div>
+
+
+    <!-- ======================================================
+         8. CARGANDO
+    ======================================================= -->
+
+    <div
+      class="mensaje-info"
+      *ngIf="cargando"
+      role="status"
+      aria-live="polite">
+
+      Consultando veterinarios...
+
+    </div>
+
+
+    <!-- ======================================================
+         9. BUSCADOR Y FILTROS
+    ======================================================= -->
+
+    <div
+      class="filtros-card"
+      *ngIf="!cargando && !errorCarga && veterinarios.length > 0">
+
+      <div class="filtro-grupo">
+
+        <label for="buscarVeterinarioAdmin">
+          Buscar veterinario
+        </label>
+
+        <input
+          id="buscarVeterinarioAdmin"
+          type="search"
+          [(ngModel)]="busqueda"
+          placeholder="Nombre, cédula, correo..."
+          autocomplete="off">
+
+        <small class="texto-ayuda">
+          También puedes buscar por teléfono o especialidad.
+        </small>
+
+      </div>
+
+      <div class="filtro-grupo">
+
+        <label for="filtrarEspecialidadAdmin">
+          Especialidad
+        </label>
+
+        <select
+          id="filtrarEspecialidadAdmin"
+          [(ngModel)]="filtroEspecialidad">
+
+          <option value="TODAS">
+            Todas las especialidades
+          </option>
+
+          <option
+            *ngFor="let especialidad of especialidadesDisponibles"
+            [value]="especialidad">
+
+            {{ especialidad }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+      <div class="filtro-grupo">
+
+        <label for="ordenarVeterinariosAdmin">
+          Ordenar
+        </label>
+
+        <select
+          id="ordenarVeterinariosAdmin"
+          [(ngModel)]="ordenarPor">
+
+          <option value="nombreAsc">
+            Nombre (A-Z)
+          </option>
+
+          <option value="nombreDesc">
+            Nombre (Z-A)
+          </option>
+
+          <option value="especialidadAsc">
+            Especialidad (A-Z)
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         10. LISTA VACÍA
+    ======================================================= -->
+
+    <div
+      class="sin-veterinarios"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        veterinarios.length === 0
+      ">
+
+      <div class="sin-icono" aria-hidden="true">
+        👨‍⚕️
+      </div>
+
+      <h3>
+        Todavía no hay veterinarios
+      </h3>
+
+      <p>
+        Puedes asignar como veterinario a una persona
+        que ya tenga una cuenta registrada y verificada.
+      </p>
+
+      <button
+        type="button"
+        class="btn-nuevo"
+        (click)="nuevoVeterinario()">
+
+        + Asignar primer veterinario
+
+      </button>
+
+    </div>
+
+
+    <!-- ======================================================
+         11. SIN RESULTADOS DE BÚSQUEDA
+    ======================================================= -->
+
+    <div
+      class="sin-resultados"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        veterinarios.length > 0 &&
+        veterinariosFiltrados.length === 0
+      ">
+
+      <div class="sin-icono" aria-hidden="true">
+        🔎
+      </div>
+
+      <h3>
+        No encontramos veterinarios
+      </h3>
+
+      <p>
+        Prueba con otro nombre o especialidad.
+      </p>
+
+      <button
+        type="button"
+        class="btn-limpiar"
+        (click)="limpiarFiltros()">
+
+        Limpiar filtros
+
+      </button>
+
+    </div>
+
+
+    <!-- ======================================================
+         12. TARJETAS DE VETERINARIOS
+    ======================================================= -->
+
+    <div
+      class="veterinarios-grid"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        veterinariosFiltrados.length > 0
+      ">
+
+      <article
+        class="veterinario-card"
+        *ngFor="
+          let veterinario of veterinariosFiltrados;
+          trackBy: trackByVeterinario
+        ">
+
+        <!-- CABECERA -->
+
+        <div class="tarjeta-superior">
+
+          <div
+            class="veterinario-icono"
+            aria-hidden="true">
+
+            👨‍⚕️
+
+          </div>
+
+          <span class="etiqueta-veterinario">
+            Profesional veterinario
+          </span>
+
+        </div>
+
+
+        <!-- NOMBRE -->
+
+        <h3 class="nombre-veterinario">
+
+          {{ veterinario.nombre }}
+
+          {{ veterinario.apellido || '' }}
+
+        </h3>
+
+
+        <!-- ESPECIALIDAD -->
+
+        <div class="especialidad-box">
+
+          <span aria-hidden="true">
+            🩺
+          </span>
+
+          <div>
+
+            <small>
+              Especialidad
+            </small>
+
+            <strong>
+              {{ veterinario.especialidad || 'No especificada' }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- INFORMACIÓN -->
+
+        <div class="veterinario-info">
+
+          <div class="info-fila">
+
+            <strong>
+              Cédula
+            </strong>
+
+            <span>
+              {{ veterinario.cedula }}
+            </span>
+
+          </div>
+
+          <div class="info-fila">
+
+            <strong>
+              Teléfono
+            </strong>
+
+            <a
+              *ngIf="veterinario.telefono; else sinTelefono"
+              [href]="'tel:' + veterinario.telefono">
+
+              {{ veterinario.telefono }}
+
+            </a>
+
+            <ng-template #sinTelefono>
+              <span>No disponible</span>
+            </ng-template>
+
+          </div>
+
+          <div class="info-fila">
+
+            <strong>
+              Correo
+            </strong>
+
+            <a
+              *ngIf="veterinario.email; else sinCorreo"
+              [href]="'mailto:' + veterinario.email">
+
+              {{ veterinario.email }}
+
+            </a>
+
+            <ng-template #sinCorreo>
+              <span>No disponible</span>
+            </ng-template>
+
+          </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             ACCIONES
+        =================================================== -->
+
+        <div class="acciones-card">
+
+          <button
+            type="button"
+            class="btn-editar"
+            (click)="editarVeterinario(veterinario)"
+            [disabled]="hayOperacionEnCurso || cargando"
+            [attr.aria-label]="
+              'Editar veterinario ' + veterinario.nombre
+            ">
+
+            ✏️ Editar
+
+          </button>
+
+          <button
+            type="button"
+            class="btn-eliminar"
+            (click)="eliminarVeterinario(veterinario)"
+            [disabled]="hayOperacionEnCurso || cargando"
+            [attr.aria-label]="
+              'Eliminar ficha de ' + veterinario.nombre
+            ">
+
+            {{
+              eliminandoId === veterinario.id
+                ? 'Eliminando...'
+                : '🗑 Eliminar'
+            }}
+
+          </button>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</div>

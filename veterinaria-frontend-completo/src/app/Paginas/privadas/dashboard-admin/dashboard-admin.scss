@@ -1,0 +1,1307 @@
+
+/* ==========================================================
+   VETERINARIA ARÉVALO
+   ESTILOS DEL DASHBOARD ADMINISTRATIVO
+
+   CARACTERÍSTICAS:
+   - Diseño profesional.
+   - Colores verdes institucionales.
+   - Tarjetas de estadísticas.
+   - Panel de citas.
+   - Panel de usuarios.
+   - Panel de facturación.
+   - Diseño adaptable a móviles.
+   - Alto contraste.
+   - Modo oscuro.
+   - Navegación accesible.
+
+   IMPORTANTE:
+   No crea otro menú lateral ni otra barra superior.
+   Utiliza LayoutPrivado.
+========================================================== */
+
+
+// ==========================================================
+// 1. CONFIGURACIÓN GENERAL
+// ==========================================================
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+:host *,
+:host *::before,
+:host *::after {
+  box-sizing: border-box;
+}
+
+
+// ==========================================================
+// 2. VARIABLES Y CONTENEDOR PRINCIPAL
+// ==========================================================
+
+.dash-final {
+
+  --df-fondo: #f5fbf8;
+  --df-panel: #ffffff;
+  --df-texto: #16372e;
+  --df-suave: #5d756c;
+  --df-borde: #dceee5;
+  --df-verde: #08785b;
+
+  min-width: 0;
+
+  padding: 8px 6px 24px;
+
+  color: var(--df-texto);
+
+  background: var(--df-fondo);
+
+  border-radius: 18px;
+
+  font-family: 'Segoe UI', Arial, sans-serif;
+
+}
+
+
+// ==========================================================
+// 3. ENCABEZADO
+// ==========================================================
+
+.dash-final__encabezado {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+
+  gap: 16px;
+
+  margin-bottom: 22px;
+
+}
+
+.dash-final__eyebrow {
+
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: var(--df-verde);
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: .10em;
+
+}
+
+.dash-final__encabezado h1 {
+
+  margin: 0 0 7px;
+
+  color: var(--df-texto);
+
+  font-size: clamp(23px, 2.7vw, 32px);
+
+  line-height: 1.22;
+
+  letter-spacing: -.6px;
+
+}
+
+.dash-final__encabezado p {
+
+  margin: 0;
+
+  color: var(--df-suave);
+
+  font-size: 14px;
+
+  line-height: 1.55;
+
+}
+
+
+// ==========================================================
+// 4. BOTÓN ACTUALIZAR
+// ==========================================================
+
+.dash-final__actualizar {
+
+  min-height: 44px;
+
+  padding: 11px 16px;
+
+  color: var(--df-verde);
+
+  background: var(--df-panel);
+
+  border: 1px solid var(--df-borde);
+
+  border-radius: 11px;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+}
+
+.dash-final__actualizar:hover:not(:disabled) {
+
+  background: #eff9f3;
+
+}
+
+.dash-final__actualizar:disabled {
+
+  opacity: .65;
+
+  cursor: wait;
+
+}
+
+
+// ==========================================================
+// 5. BANNER DE BIENVENIDA
+// ==========================================================
+
+.dash-final__hero {
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(210px, 37%);
+
+  align-items: stretch;
+
+  min-height: 210px;
+
+  margin-bottom: 20px;
+
+  overflow: hidden;
+
+  background: linear-gradient(
+    110deg,
+    #e4f9ef,
+    #d3f3e3
+  );
+
+  border: 1px solid #ccece0;
+
+  border-radius: 20px;
+
+}
+
+.dash-final__hero-texto {
+
+  align-self: center;
+
+  min-width: 0;
+
+  padding: 25px 28px;
+
+}
+
+.dash-final__hero-texto > span {
+
+  display: inline-block;
+
+  margin-bottom: 10px;
+
+  color: #057252;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: .07em;
+
+}
+
+.dash-final__hero h2 {
+
+  max-width: 400px;
+
+  margin: 0 0 10px;
+
+  color: #075942;
+
+  font-size: clamp(23px, 2.5vw, 31px);
+
+  line-height: 1.18;
+
+}
+
+.dash-final__hero p {
+
+  max-width: 470px;
+
+  margin: 0 0 14px;
+
+  color: #365d4d;
+
+  font-size: 13px;
+
+  line-height: 1.55;
+
+}
+
+.dash-final__hero button,
+.dash-final__pie button {
+
+  min-height: 44px;
+
+  padding: 11px 16px;
+
+  color: #ffffff;
+
+  background: #08785b;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+}
+
+.dash-final__hero button:hover,
+.dash-final__pie button:hover {
+
+  background: #06664d;
+
+}
+
+.dash-final__hero img {
+
+  width: 100%;
+
+  height: 100%;
+
+  min-height: 210px;
+
+  object-fit: cover;
+
+  object-position: 57% center;
+
+}
+
+
+// ==========================================================
+// 6. MENSAJE DE ERROR
+// ==========================================================
+
+.dash-final__alerta {
+
+  margin: 0 0 18px;
+
+  padding: 12px 15px;
+
+  color: #9d2538;
+
+  background: #fff1f3;
+
+  border: 1px solid #f4bdc5;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+
+}
+
+
+// ==========================================================
+// 7. CUADRÍCULA DE ESTADÍSTICAS
+// ==========================================================
+
+.dash-final__indicadores {
+
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 14px;
+
+  margin-bottom: 20px;
+
+}
+
+
+// ==========================================================
+// 8. TARJETAS DE ESTADÍSTICAS
+// ==========================================================
+
+.dash-final__indicador {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 12px;
+
+  min-width: 0;
+
+  padding: 18px 15px;
+
+  background: var(--df-panel);
+
+  border: 1px solid var(--df-borde);
+
+  border-radius: 16px;
+
+  box-shadow: 0 8px 24px rgba(16, 80, 57, .045);
+
+}
+
+.dash-final__indicador-icono {
+
+  display: grid;
+
+  place-items: center;
+
+  flex: 0 0 43px;
+
+  width: 43px;
+
+  height: 43px;
+
+  background: #ddf5e9;
+
+  border-radius: 13px;
+
+  font-size: 22px;
+
+}
+
+.dash-final__indicador div {
+
+  min-width: 0;
+
+}
+
+.dash-final__indicador div > span {
+
+  display: block;
+
+  color: var(--df-suave);
+
+  font-size: 12px;
+
+  line-height: 1.3;
+
+}
+
+.dash-final__indicador strong {
+
+  display: block;
+
+  margin: 7px 0 5px;
+
+  color: var(--df-texto);
+
+  font-size: 28px;
+
+  line-height: 1.15;
+
+  overflow-wrap: anywhere;
+
+}
+
+.dash-final__indicador small {
+
+  color: var(--df-suave);
+
+  font-size: 11px;
+
+  line-height: 1.4;
+
+}
+
+
+// ==========================================================
+// 9. TARJETAS DE FACTURACIÓN
+// ==========================================================
+
+.dash-final__indicador--factura
+.dash-final__indicador-icono {
+
+  background: #e7f0fb;
+
+}
+
+.dash-final__importe-indicador {
+
+  font-size: clamp(18px, 2vw, 25px) !important;
+
+  overflow-wrap: anywhere;
+
+}
+
+
+// ==========================================================
+// 10. COLUMNAS PRINCIPALES
+// ==========================================================
+
+.dash-final__columnas {
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.2fr)
+    minmax(0, 1fr);
+
+  gap: 18px;
+
+  margin-bottom: 18px;
+
+}
+
+
+// ==========================================================
+// 11. PANELES DE INFORMACIÓN
+// ==========================================================
+
+.dash-final__panel {
+
+  min-width: 0;
+
+  padding: 20px;
+
+  background: var(--df-panel);
+
+  border: 1px solid var(--df-borde);
+
+  border-radius: 17px;
+
+  box-shadow: 0 7px 22px rgba(16, 80, 57, .045);
+
+}
+
+.dash-final__panel--facturas {
+
+  margin-bottom: 18px;
+
+}
+
+
+// ==========================================================
+// 12. ENCABEZADOS DE PANELES
+// ==========================================================
+
+.dash-final__panel-head {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 18px;
+
+}
+
+.dash-final__panel-head h2 {
+
+  margin: 0;
+
+  color: var(--df-texto);
+
+  font-size: 18px;
+
+  line-height: 1.3;
+
+}
+
+.dash-final__panel-head p {
+
+  margin: 4px 0 0;
+
+  color: var(--df-suave);
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+}
+
+.dash-final__panel-head button {
+
+  flex: 0 0 auto;
+
+  padding: 9px 10px;
+
+  color: #076f50;
+
+  background: #e7f8ef;
+
+  border: 0;
+
+  border-radius: 9px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+}
+
+
+// ==========================================================
+// 13. MENSAJES VACÍOS
+// ==========================================================
+
+.dash-final__vacio {
+
+  margin: 0;
+
+  padding: 20px;
+
+  color: var(--df-suave);
+
+  background: #f3faf7;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+
+  text-align: center;
+
+  line-height: 1.5;
+
+}
+
+
+// ==========================================================
+// 14. LISTAS DE INFORMACIÓN
+// ==========================================================
+
+.dash-final__lista {
+
+  display: grid;
+
+  gap: 10px;
+
+}
+
+
+// ==========================================================
+// 15. FILAS DE CITAS Y FACTURAS
+// ==========================================================
+
+.dash-final__fila {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+
+  padding: 11px;
+
+  background: #fbfffd;
+
+  border: 1px solid var(--df-borde);
+
+  border-radius: 12px;
+
+}
+
+
+// ==========================================================
+// 16. AVATARES E ICONOS
+// ==========================================================
+
+.dash-final__avatar {
+
+  display: grid;
+
+  place-items: center;
+
+  flex: 0 0 40px;
+
+  width: 40px;
+
+  height: 40px;
+
+  background: #e2f7ec;
+
+  border-radius: 11px;
+
+  font-size: 20px;
+
+}
+
+.dash-final__avatar--factura {
+
+  background: #e7f0fb;
+
+}
+
+
+// ==========================================================
+// 17. INFORMACIÓN DE LAS FILAS
+// ==========================================================
+
+.dash-final__fila-texto {
+
+  display: grid;
+
+  flex: 1 1 auto;
+
+  gap: 3px;
+
+  min-width: 0;
+
+}
+
+.dash-final__fila-texto strong {
+
+  color: var(--df-texto);
+
+  font-size: 13px;
+
+  overflow-wrap: anywhere;
+
+}
+
+.dash-final__fila-texto span {
+
+  color: var(--df-suave);
+
+  font-size: 12px;
+
+  overflow-wrap: anywhere;
+
+}
+
+.dash-final__fila-texto small {
+
+  color: var(--df-suave);
+
+  font-size: 11px;
+
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+
+}
+
+
+// ==========================================================
+// 18. ESTADOS
+// ==========================================================
+
+.dash-final__estado,
+.dash-final__etiqueta {
+
+  flex: 0 0 auto;
+
+  padding: 6px 9px;
+
+  color: #087052;
+
+  background: #dbf6e8;
+
+  border-radius: 20px;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  text-align: center;
+
+  overflow-wrap: anywhere;
+
+}
+
+.dash-final__estado--pendiente {
+
+  color: #795a09;
+
+  background: #fff0c9;
+
+}
+
+
+// ==========================================================
+// 19. RESUMEN DE FACTURAS
+// ==========================================================
+
+.dash-final__factura-resumen {
+
+  display: flex;
+
+  flex: 0 0 auto;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 7px;
+
+  min-width: 90px;
+
+}
+
+.dash-final__factura-total {
+
+  color: #087052;
+
+  font-size: 16px;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+
+}
+
+
+// ==========================================================
+// 20. LISTA DE ESTADOS DE USUARIOS
+// ==========================================================
+
+.dash-final__lista-estados {
+
+  display: grid;
+
+  gap: 0;
+
+}
+
+.dash-final__lista-estados > div {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  min-height: 47px;
+
+  gap: 12px;
+
+  border-bottom: 1px solid var(--df-borde);
+
+  font-size: 13px;
+
+}
+
+.dash-final__lista-estados > div span {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  color: var(--df-suave);
+
+}
+
+.dash-final__lista-estados > div strong {
+
+  color: var(--df-texto);
+
+  font-size: 16px;
+
+}
+
+
+// ==========================================================
+// 21. INDICADORES DE COLORES DE USUARIOS
+// ==========================================================
+
+.dash-final__punto {
+
+  display: inline-block;
+
+  width: 9px;
+
+  height: 9px;
+
+  border-radius: 50%;
+
+}
+
+.dash-final__punto--verde {
+
+  background: #24a66a;
+
+}
+
+.dash-final__punto--amarillo {
+
+  background: #d7a225;
+
+}
+
+.dash-final__punto--rojo {
+
+  background: #d95459;
+
+}
+
+.dash-final__punto--gris {
+
+  background: #7f9091;
+
+}
+
+
+// ==========================================================
+// 22. NOTA INFORMATIVA
+// ==========================================================
+
+.dash-final__nota {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 17px;
+
+  padding: 13px;
+
+  color: #156448;
+
+  background: #e6f7ee;
+
+  border-radius: 10px;
+
+}
+
+.dash-final__nota strong {
+
+  font-size: 24px;
+
+}
+
+.dash-final__nota span {
+
+  font-size: 12px;
+
+}
+
+
+// ==========================================================
+// 23. PIE DEL DASHBOARD
+// ==========================================================
+
+.dash-final__pie {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 16px 21px;
+
+  background: linear-gradient(
+    110deg,
+    #ddf5e9,
+    #bdebd7
+  );
+
+  border-radius: 18px;
+
+}
+
+.dash-final__pie > span {
+
+  font-size: 30px;
+
+}
+
+.dash-final__pie > div {
+
+  flex: 1;
+
+  min-width: 0;
+
+}
+
+.dash-final__pie strong {
+
+  color: #075740;
+
+  font-size: 16px;
+
+}
+
+.dash-final__pie p {
+
+  margin: 4px 0 0;
+
+  color: #406d5b;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+}
+
+
+// ==========================================================
+// 24. ACCESIBILIDAD Y ENFOQUE
+// ==========================================================
+
+.dash-final button:focus-visible {
+
+  outline: 3px solid #08785b;
+
+  outline-offset: 3px;
+
+}
+
+
+// ==========================================================
+// 25. RESPONSIVE PARA PANTALLAS MEDIANAS
+// ==========================================================
+
+@media (max-width: 1250px) {
+
+  .dash-final__indicadores {
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  }
+
+  .dash-final__columnas {
+
+    grid-template-columns: 1fr;
+
+  }
+
+}
+
+
+// ==========================================================
+// 26. RESPONSIVE PARA TELÉFONOS
+// ==========================================================
+
+@media (max-width: 680px) {
+
+  .dash-final {
+
+    padding: 4px 0 16px;
+
+  }
+
+  .dash-final__hero {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .dash-final__hero-texto {
+
+    padding: 22px;
+
+  }
+
+  .dash-final__hero img {
+
+    height: 150px;
+
+    min-height: 150px;
+
+    object-position: center 38%;
+
+  }
+
+  .dash-final__indicadores {
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+  }
+
+  .dash-final__indicador {
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    padding: 13px;
+
+  }
+
+  .dash-final__indicador strong {
+
+    font-size: 24px;
+
+  }
+
+  .dash-final__indicador-icono {
+
+    flex-basis: 37px;
+
+    width: 37px;
+
+    height: 37px;
+
+  }
+
+  .dash-final__panel {
+
+    padding: 15px;
+
+  }
+
+  .dash-final__panel-head {
+
+    flex-wrap: wrap;
+
+  }
+
+  .dash-final__fila--factura {
+
+    align-items: flex-start;
+
+    flex-wrap: wrap;
+
+  }
+
+  .dash-final__factura-resumen {
+
+    margin-left: 50px;
+
+    align-items: flex-start;
+
+  }
+
+  .dash-final__pie {
+
+    flex-wrap: wrap;
+
+  }
+
+}
+
+
+// ==========================================================
+// 27. RESPONSIVE PARA TELÉFONOS PEQUEÑOS
+// ==========================================================
+
+@media (max-width: 390px) {
+
+  .dash-final__indicadores {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .dash-final__fila {
+
+    flex-wrap: wrap;
+
+  }
+
+  .dash-final__estado,
+  .dash-final__etiqueta {
+
+    margin-left: 50px;
+
+  }
+
+  .dash-final__factura-resumen {
+
+    margin-left: 50px;
+
+  }
+
+}
+
+
+// ==========================================================
+// 28. MODO DE MOVIMIENTO REDUCIDO
+// ==========================================================
+
+@media (prefers-reduced-motion: reduce) {
+
+  .dash-final *,
+  .dash-final *::before,
+  .dash-final *::after {
+
+    transition: none !important;
+
+    animation: none !important;
+
+  }
+
+}
+
+
+// ==========================================================
+// 29. MODO DE ALTO CONTRASTE
+// ==========================================================
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final {
+
+  --df-fondo: #000000;
+
+  --df-panel: #000000;
+
+  --df-texto: #ffffff;
+
+  --df-suave: #f5f5f5;
+
+  --df-borde: #ffe45c;
+
+  --df-verde: #ffe45c;
+
+}
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final__hero,
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final__pie,
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final__fila,
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final__vacio,
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final__nota {
+
+  color: #ffffff !important;
+
+  background: #000000 !important;
+
+  border: 1px solid #ffe45c !important;
+
+}
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final__hero :is(h2, p, span),
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final__pie :is(p, strong),
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final__fila-texto :is(strong, span, small),
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final__panel-head button {
+
+  color: #ffe45c !important;
+
+}
+
+:host-context(html[data-vet-contraste='alto'])
+.dash-final__hero img {
+
+  display: none;
+
+}
+
+
+// ==========================================================
+// 30. MODO OSCURO
+// ==========================================================
+
+:host-context(html[data-vet-contraste='oscuro'])
+.dash-final {
+
+  --df-fondo: #151720;
+
+  --df-panel: #20232e;
+
+  --df-texto: #f5f6fb;
+
+  --df-suave: #d1d5df;
+
+  --df-borde: #505768;
+
+  --df-verde: #8eddb9;
+
+}
+
+:host-context(html[data-vet-contraste='oscuro'])
+.dash-final__hero {
+
+  background: linear-gradient(
+    110deg,
+    #263b36,
+    #263d35
+  );
+
+  border-color: #405d50;
+
+}
+
+:host-context(html[data-vet-contraste='oscuro'])
+.dash-final__hero :is(h2, p, span) {
+
+  color: #d8f5e5;
+
+}
+
+:host-context(html[data-vet-contraste='oscuro'])
+.dash-final__fila {
+
+  background: #252b36;
+
+}
+
+:host-context(html[data-vet-contraste='oscuro'])
+.dash-final__vacio {
+
+  background: #292e3b;
+
+  color: #d1d5df;
+
+}
+
+:host-context(html[data-vet-contraste='oscuro'])
+.dash-final__nota {
+
+  color: #d8f5e5;
+
+  background: #263c34;
+
+}
+
+:host-context(html[data-vet-contraste='oscuro'])
+.dash-final__pie {
+
+  background: #263b36;
+
+}
+
+:host-context(html[data-vet-contraste='oscuro'])
+.dash-final__pie :is(strong, p) {
+
+  color: #d8f5e5;
+
+}

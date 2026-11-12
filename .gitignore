@@ -1,0 +1,31 @@
+﻿# Angular
+**/node_modules/
+**/dist/
+**/.angular/
+
+# Java y Maven
+**/target/
+**/*.class
+
+# Contraseñas y credenciales
+**/application-local.properties
+**/.env
+**/.env.*
+**/credentials.json
+**/*service-account*.json
+**/*.pem
+**/*.p12
+**/*.jks
+
+# Archivos temporales y respaldos
+**/*.zip
+**/*.bak
+**/*.dump
+**/*.log
+
+# Configuración local
+**/.idea/
+**/.vscode/
+
+# Carpeta de workflows existente: revisar por separado
+.github/

@@ -1,0 +1,1297 @@
+
+/* ==========================================================
+   VETERINARIA AREVALO
+   ADMINISTRACIÓN DE USUARIOS - ESTILOS
+
+   MEJORAS VISUALES:
+   - Diseño verde institucional y blanco.
+   - Estadísticas en tarjetas.
+   - Filtros de usuarios.
+   - Estados diferenciados.
+   - Acciones administrativas claras.
+   - Navegación accesible por teclado.
+   - Adaptación a teléfonos.
+
+   El menú lateral lo controla LayoutPrivado.
+   ========================================================== */
+
+
+/* ==========================================================
+   1. CONFIGURACIÓN GENERAL
+   ========================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+:host *,
+:host *::before,
+:host *::after {
+  box-sizing: border-box;
+}
+
+
+/* ==========================================================
+   2. CONTENEDOR PRINCIPAL
+   ========================================================== */
+
+.usuarios-container {
+  width: 100%;
+  min-width: 0;
+
+  padding: 0;
+
+  background: transparent;
+
+  color: #244b3b;
+
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+
+/* ==========================================================
+   3. CABECERA
+   ========================================================== */
+
+.usuarios-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 20px;
+
+  margin-bottom: 25px;
+  padding: 28px 30px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 25px rgba(19, 75, 54, 0.06);
+}
+
+.header-texto {
+  flex: 1;
+  min-width: 220px;
+}
+
+.etiqueta-pagina {
+  display: inline-block;
+
+  margin-bottom: 10px;
+
+  color: #0c7b5b;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.usuarios-header h1 {
+  margin: 0;
+
+  color: #183f31;
+
+  font-size: 29px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.usuarios-header p {
+  margin: 9px 0 0;
+
+  color: #6e8277;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.acciones-header {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+
+/* ==========================================================
+   4. BOTÓN VOLVER
+   ========================================================== */
+
+.btn-volver {
+  min-height: 44px;
+
+  padding: 11px 17px;
+
+  border: 1px solid #dbe9e0;
+  border-radius: 10px;
+
+  background: #eef7f1;
+  color: #4b6659;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.btn-volver:hover {
+  background: #e2f1e8;
+}
+
+
+/* ==========================================================
+   5. RESUMEN GENERAL
+   ========================================================== */
+
+.resumen-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+
+  margin-bottom: 28px;
+}
+
+.resumen-card {
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  min-width: 0;
+  padding: 22px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 17px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 7px 22px rgba(19, 75, 54, 0.05);
+}
+
+.resumen-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 52px;
+  height: 52px;
+
+  flex-shrink: 0;
+
+  border-radius: 15px;
+
+  font-size: 25px;
+}
+
+.icono-total {
+  background: #e6f4eb;
+}
+
+.icono-aprobados {
+  background: #e6f8ed;
+}
+
+.icono-pendientes {
+  background: #fff3d8;
+}
+
+.icono-bloqueados {
+  background: #ffebed;
+}
+
+.resumen-datos {
+  min-width: 0;
+}
+
+.resumen-datos span {
+  display: block;
+
+  color: #6e8277;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.resumen-datos strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #244b3b;
+
+  font-size: 28px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   6. MENSAJES
+   ========================================================== */
+
+.mensaje-info,
+.mensaje-error,
+.mensaje-exito {
+  margin-bottom: 23px;
+  padding: 15px 18px;
+
+  border-radius: 12px;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.mensaje-info {
+  border: 1px solid #d2e8da;
+
+  background: #ffffff;
+  color: #0b7656;
+
+  text-align: center;
+}
+
+.mensaje-error {
+  border: 1px solid #f3b4b4;
+
+  background: #fff1f0;
+  color: #a32020;
+}
+
+.mensaje-exito {
+  border: 1px solid #b7ebc9;
+
+  background: #ecfdf3;
+  color: #176b3a;
+}
+
+.btn-reintentar {
+  min-height: 35px;
+
+  margin-left: 12px;
+  padding: 7px 13px;
+
+  border: 1px solid #a32020;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #a32020;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* ==========================================================
+   7. ENCABEZADO DE GESTIÓN
+   ========================================================== */
+
+.gestion-section {
+  min-width: 0;
+}
+
+.gestion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+.gestion-header h2 {
+  margin: 0;
+
+  color: #244b3b;
+
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.gestion-header p {
+  margin: 7px 0 0;
+
+  color: #6e8277;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.gestion-acciones {
+  display: flex;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.total-resultados {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 35px;
+
+  padding: 8px 12px;
+
+  border-radius: 20px;
+
+  background: #e6f4eb;
+  color: #0b7656;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.btn-actualizar {
+  min-height: 44px;
+
+  padding: 11px 16px;
+
+  border: 1px solid #d2e8da;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #0b7656;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.btn-actualizar:hover:not(:disabled) {
+  background: #edf7f1;
+}
+
+
+/* ==========================================================
+   8. BOTONES TODOS / PENDIENTES
+   ========================================================== */
+
+.filtros-vista {
+  display: flex;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 12px;
+
+  margin-bottom: 20px;
+}
+
+.btn-filtro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  min-height: 45px;
+
+  padding: 11px 17px;
+
+  border: 1px solid #d7e5dc;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #52685d;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.btn-filtro:hover:not(:disabled) {
+  border-color: #0d8964;
+
+  color: #0d8964;
+}
+
+.btn-filtro.activo {
+  border-color: #0d8964;
+
+  background: #0d8964;
+  color: #ffffff;
+}
+
+.contador-pendientes {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 22px;
+  height: 22px;
+
+  padding: 3px 6px;
+
+  border-radius: 20px;
+
+  background: #fff3d8;
+  color: #775000;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   9. BUSCADOR Y FILTRO POR ESTADO
+   ========================================================== */
+
+.filtros-card {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 2fr) minmax(190px, 1fr);
+
+  gap: 18px;
+
+  margin-bottom: 25px;
+  padding: 20px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 15px;
+
+  background: #ffffff;
+}
+
+.filtro-grupo {
+  min-width: 0;
+}
+
+.filtro-grupo label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #354f43;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.filtro-grupo input,
+.filtro-grupo select {
+  display: block;
+
+  width: 100%;
+  min-height: 46px;
+
+  padding: 11px 13px;
+
+  border: 1px solid #d7e5dc;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: #fbfdfb;
+  color: #244b3b;
+
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.filtro-grupo input::placeholder {
+  color: #7b8d82;
+}
+
+.filtro-grupo input:focus,
+.filtro-grupo select:focus {
+  border-color: #0d8964;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px rgba(13, 137, 100, 0.15);
+}
+
+.texto-ayuda {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #6e8277;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+/* ==========================================================
+   10. SIN USUARIOS O SIN RESULTADOS
+   ========================================================== */
+
+.sin-usuarios,
+.sin-resultados {
+  padding: 35px 25px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 17px;
+
+  background: #ffffff;
+
+  text-align: center;
+
+  box-shadow:
+    0 8px 25px rgba(19, 75, 54, 0.05);
+}
+
+.sin-icono {
+  margin-bottom: 12px;
+
+  font-size: 48px;
+}
+
+.sin-usuarios h3,
+.sin-resultados h3 {
+  margin: 0 0 10px;
+
+  color: #244b3b;
+
+  font-size: 20px;
+}
+
+.sin-usuarios p,
+.sin-resultados p {
+  max-width: 480px;
+
+  margin: 0 auto;
+
+  color: #6e8277;
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.btn-limpiar {
+  min-height: 42px;
+
+  margin-top: 19px;
+  padding: 10px 16px;
+
+  border: 1px solid #0d8964;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #0b7656;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.btn-limpiar:hover {
+  background: #edf7f1;
+}
+
+
+/* ==========================================================
+   11. CUADRÍCULA DE USUARIOS
+   ========================================================== */
+
+.usuarios-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(300px, 1fr));
+
+  gap: 22px;
+}
+
+
+/* ==========================================================
+   12. TARJETA DE USUARIO
+   ========================================================== */
+
+.usuario-card {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  padding: 24px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 25px rgba(19, 75, 54, 0.06);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.usuario-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 13px 30px rgba(13, 116, 81, 0.12);
+}
+
+
+/* ==========================================================
+   13. ENCABEZADO DEL USUARIO
+   ========================================================== */
+
+.usuario-superior {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin-bottom: 20px;
+}
+
+.usuario-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 55px;
+  height: 55px;
+
+  flex-shrink: 0;
+
+  border-radius: 15px;
+
+  background: linear-gradient(
+    135deg,
+    #e6f4eb,
+    #d8eee1
+  );
+
+  font-size: 26px;
+}
+
+.usuario-identidad {
+  min-width: 0;
+}
+
+.usuario-identidad h3 {
+  margin: 0 0 8px;
+
+  color: #244b3b;
+
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+.rol {
+  display: inline-block;
+
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  background: #e8f5ed;
+  color: #0b7656;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.rol.admin {
+  background: #fff0cf;
+  color: #805500;
+}
+
+
+/* ==========================================================
+   14. INFORMACIÓN DE LA CUENTA
+   ========================================================== */
+
+.usuario-info {
+  margin-bottom: 20px;
+}
+
+.info-fila {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 8px;
+
+  padding: 12px 0;
+
+  border-bottom: 1px solid #edf4ef;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.info-fila strong {
+  color: #354f43;
+  font-weight: 600;
+}
+
+.info-fila > span {
+  max-width: 100%;
+
+  color: #657b6f;
+
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.correo-usuario {
+  word-break: break-word;
+}
+
+
+/* ==========================================================
+   15. ESTADOS
+   ========================================================== */
+
+.estado {
+  display: inline-block;
+
+  padding: 6px 10px;
+
+  border: 1px solid transparent;
+  border-radius: 20px;
+
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* Pendiente de aprobación */
+.estado.pendiente {
+  border-color: #f0d79a;
+
+  background: #fff4d9;
+  color: #765100;
+}
+
+/* Cuenta aprobada */
+.estado.aprobada {
+  border-color: #b6e7ca;
+
+  background: #e8faef;
+  color: #176b3a;
+}
+
+/* Solicitud rechazada */
+.estado.rechazada {
+  border-color: #f3c0c7;
+
+  background: #ffedf0;
+  color: #a32034;
+}
+
+/* Cuenta bloqueada */
+.estado.bloqueada {
+  border-color: #d5d2e0;
+
+  background: #f0eff5;
+  color: #4d4a5f;
+}
+
+/* Cuenta inactiva */
+.estado.inactiva {
+  border-color: #d5d2e0;
+
+  background: #f0eff5;
+  color: #4d4a5f;
+}
+
+
+/* ==========================================================
+   16. VERIFICACIÓN Y ACTIVACIÓN
+   ========================================================== */
+
+.estado-simple {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.info-fila > .cuenta-activa {
+  color: #176b3a;
+}
+
+.info-fila > .cuenta-inactiva {
+  color: #a32034;
+}
+
+
+/* ==========================================================
+   17. CUENTA ADMIN PROTEGIDA
+   ========================================================== */
+
+.aviso-admin {
+  margin-top: auto;
+  padding: 13px;
+
+  border: 1px solid #f0d79a;
+  border-radius: 10px;
+
+  background: #fff7df;
+  color: #795300;
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+
+  text-align: center;
+}
+
+
+/* ==========================================================
+   18. ACCIONES DE USUARIOS
+   ========================================================== */
+
+.acciones {
+  display: flex;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 9px;
+
+  margin-top: auto;
+  padding-top: 17px;
+}
+
+.acciones button {
+  flex: 1 1 auto;
+
+  min-width: 100px;
+  min-height: 43px;
+
+  padding: 10px 12px;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.acciones button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   19. APROBAR
+   ========================================================== */
+
+.btn-aprobar {
+  background: #e5f8ed;
+  color: #176b3a;
+}
+
+.btn-aprobar:hover:not(:disabled) {
+  background: #198754;
+  color: #ffffff;
+}
+
+
+/* ==========================================================
+   20. RECHAZAR
+   ========================================================== */
+
+.btn-rechazar {
+  background: #ffe8eb;
+  color: #a32034;
+}
+
+.btn-rechazar:hover:not(:disabled) {
+  background: #c52c37;
+  color: #ffffff;
+}
+
+
+/* ==========================================================
+   21. BLOQUEAR
+   ========================================================== */
+
+.btn-bloquear {
+  background: #fff2d4;
+  color: #805d00;
+}
+
+.btn-bloquear:hover:not(:disabled) {
+  background: #a87400;
+  color: #ffffff;
+}
+
+
+/* ==========================================================
+   22. ACTIVAR
+   ========================================================== */
+
+.btn-activar {
+  background: #def6f4;
+  color: #086f72;
+}
+
+.btn-activar:hover:not(:disabled) {
+  background: #087e83;
+  color: #ffffff;
+}
+
+
+/* ==========================================================
+   23. ELIMINAR
+   ========================================================== */
+
+.btn-eliminar {
+  background: #ffe5e9;
+  color: #9b1c31;
+}
+
+.btn-eliminar:hover:not(:disabled) {
+  background: #c82333;
+  color: #ffffff;
+}
+
+
+/* ==========================================================
+   24. ESTADO DE OPERACIÓN EN CURSO
+   ========================================================== */
+
+.accion-cargando {
+  flex: 1 1 100%;
+
+  margin: 0;
+  padding: 9px;
+
+  border: 1px solid #d2e8da;
+  border-radius: 8px;
+
+  background: #f2f8f4;
+  color: #0b7656;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* ==========================================================
+   25. ACCESIBILIDAD POR TECLADO
+   ========================================================== */
+
+.usuarios-container button:focus-visible,
+.usuarios-container input:focus-visible,
+.usuarios-container select:focus-visible {
+  outline: 3px solid #0d8964;
+  outline-offset: 3px;
+}
+
+.usuarios-container button:disabled {
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   26. PANTALLAS MEDIANAS
+   ========================================================== */
+
+@media (max-width: 1250px) {
+
+  .resumen-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* ==========================================================
+   27. TABLETS
+   ========================================================== */
+
+@media (max-width: 800px) {
+
+  .usuarios-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .usuarios-header {
+    padding: 24px;
+  }
+
+  .filtros-card {
+    grid-template-columns: 1fr;
+  }
+
+  .acciones-header {
+    width: 100%;
+  }
+
+}
+
+
+/* ==========================================================
+   28. CELULARES
+   ========================================================== */
+
+@media (max-width: 600px) {
+
+  .usuarios-header {
+    padding: 20px;
+  }
+
+  .usuarios-header h1 {
+    font-size: 24px;
+  }
+
+  .acciones-header,
+  .btn-volver {
+    width: 100%;
+  }
+
+  .resumen-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .resumen-card {
+    padding: 18px;
+  }
+
+  .gestion-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gestion-acciones {
+    width: 100%;
+  }
+
+  .filtros-vista {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-filtro {
+    width: 100%;
+  }
+
+  .filtros-card {
+    padding: 16px;
+  }
+
+  .filtro-grupo input,
+  .filtro-grupo select {
+    font-size: 16px;
+  }
+
+  .usuarios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .usuario-card {
+    padding: 20px;
+  }
+
+  .acciones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .acciones button {
+    width: 100%;
+  }
+
+}
+
+
+/* ==========================================================
+   29. CELULARES PEQUEÑOS
+   ========================================================== */
+
+@media (max-width: 370px) {
+
+  .usuarios-header,
+  .usuario-card {
+    padding: 16px;
+  }
+
+  .usuarios-header h1 {
+    font-size: 22px;
+  }
+
+  .usuario-superior {
+    align-items: flex-start;
+  }
+
+}
+
+
+/* ==========================================================
+   30. REDUCIR ANIMACIONES
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .usuarios-container *,
+  .usuarios-container *::before,
+  .usuarios-container *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .usuario-card:hover {
+    transform: none;
+  }
+
+}
+
+/* ==========================================================
+   ACCESOS RÁPIDOS ADMINISTRATIVOS
+   Se agregan sin modificar formularios ni lógica del módulo.
+   ========================================================== */
+
+.admin-accesos {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  margin: 0 0 25px;
+  padding: 18px 20px;
+  border: 1px solid #e0ede5;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 7px 22px rgba(19, 75, 54, 0.045);
+}
+
+.admin-accesos__encabezado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-accesos__icono {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 11px;
+  background: #e6f4eb;
+  font-size: 18px;
+}
+
+.admin-accesos__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.admin-accesos__texto strong {
+  color: #183f31;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-accesos__texto small {
+  color: #71847a;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.admin-accesos__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 8px;
+}
+
+.admin-acceso {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid #dcebe2;
+  border-radius: 10px;
+  background: #f7fbf8;
+  color: #315b48;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+              color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.admin-acceso:hover {
+  transform: translateY(-1px);
+  border-color: #9acdb2;
+  background: #eaf6ee;
+  color: #075b43;
+}
+
+.admin-acceso.activo,
+.admin-acceso[aria-current="page"] {
+  border-color: #0d8964;
+  background: #0d8964;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(13, 137, 100, 0.16);
+}
+
+.admin-acceso:focus-visible {
+  outline: 3px solid rgba(13, 137, 100, 0.25);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .admin-accesos {
+    padding: 15px;
+  }
+
+  .admin-accesos__lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-acceso {
+    min-height: 40px;
+    padding: 8px 7px;
+    font-size: 11px;
+  }
+}

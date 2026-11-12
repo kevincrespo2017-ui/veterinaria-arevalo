@@ -1,0 +1,1199 @@
+
+/* ==========================================================
+   VETERINARIA ARÉVALO
+   ADMINISTRACIÓN DE VETERINARIOS
+
+   DISEÑO COMPLETO:
+   1. Encabezado administrativo.
+   2. Botones y acciones.
+   3. Resumen de profesionales.
+   4. Mensajes del sistema.
+   5. Formulario de registro y edición.
+   6. Selector de usuarios existentes.
+   7. Información de cuenta seleccionada.
+   8. Buscador y filtros.
+   9. Tarjetas de veterinarios.
+   10. Accesibilidad.
+   11. Diseño adaptable.
+========================================================== */
+
+
+/* ==========================================================
+   1. CONFIGURACIÓN GENERAL
+========================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  color: #244b3b;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+:host *,
+:host *::before,
+:host *::after {
+  box-sizing: border-box;
+}
+
+.veterinarios-container {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  color: #244b3b;
+}
+
+
+/* ==========================================================
+   2. ENCABEZADO
+========================================================== */
+
+.veterinarios-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  margin-bottom: 25px;
+  padding: 28px 30px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 25px rgba(19, 75, 54, 0.06);
+}
+
+.header-texto {
+  flex: 1;
+  min-width: 220px;
+}
+
+.etiqueta-pagina {
+  display: inline-block;
+  margin-bottom: 10px;
+
+  color: #0c7b5b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.veterinarios-header h1 {
+  margin: 0;
+  color: #183f31;
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.veterinarios-header p {
+  margin: 9px 0 0;
+  color: #6e8277;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.acciones-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+
+
+/* ==========================================================
+   3. BOTONES
+========================================================== */
+
+.veterinarios-container button {
+  font-family: inherit;
+}
+
+.btn-nuevo,
+.btn-volver,
+.btn-actualizar,
+.btn-guardar,
+.btn-cancelar,
+.btn-limpiar,
+.btn-editar,
+.btn-eliminar,
+.btn-reintentar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 43px;
+  padding: 11px 16px;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-nuevo,
+.btn-guardar {
+  border: 1px solid #0d8964;
+  background: linear-gradient(135deg, #0d8964, #087958);
+  color: #ffffff;
+}
+
+.btn-nuevo:hover:not(:disabled),
+.btn-guardar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 18px rgba(13, 137, 100, 0.24);
+}
+
+.btn-volver,
+.btn-cancelar {
+  border: 1px solid #dbe9e0;
+  background: #eef7f1;
+  color: #4b6659;
+}
+
+.btn-volver:hover,
+.btn-cancelar:hover:not(:disabled) {
+  background: #e2f1e8;
+}
+
+.btn-actualizar,
+.btn-limpiar {
+  border: 1px solid #d2e8da;
+  background: #ffffff;
+  color: #0b7656;
+}
+
+.btn-actualizar:hover:not(:disabled),
+.btn-limpiar:hover {
+  background: #edf7f1;
+}
+
+.btn-reintentar {
+  min-height: 35px;
+  margin-left: 10px;
+  border: 1px solid #e3b0b0;
+  background: #ffffff;
+  color: #a32020;
+}
+
+.btn-editar {
+  flex: 1;
+  border: 1px solid #d2e8da;
+  background: #eaf6ee;
+  color: #0b7656;
+}
+
+.btn-editar:hover:not(:disabled) {
+  background: #def0e5;
+}
+
+.btn-eliminar {
+  flex: 1;
+  border: 1px solid #f1c5c5;
+  background: #fff3f3;
+  color: #bd3030;
+}
+
+.btn-eliminar:hover:not(:disabled) {
+  background: #ffe4e4;
+}
+
+.veterinarios-container button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   4. RESUMEN DE VETERINARIOS
+========================================================== */
+
+.resumen-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 350px);
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.resumen-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+  padding: 22px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 17px;
+  background: #ffffff;
+
+  box-shadow: 0 7px 22px rgba(19, 75, 54, 0.05);
+}
+
+.resumen-icono {
+  display: grid;
+  place-items: center;
+  width: 55px;
+  height: 55px;
+  flex-shrink: 0;
+
+  border-radius: 15px;
+  background: #e6f4eb;
+  font-size: 26px;
+}
+
+.resumen-datos {
+  min-width: 0;
+}
+
+.resumen-datos span {
+  display: block;
+  color: #6e8277;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.resumen-datos strong {
+  display: block;
+  margin-top: 5px;
+  color: #244b3b;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   5. MENSAJES DEL SISTEMA
+========================================================== */
+
+.mensaje-info,
+.mensaje-error,
+.mensaje-exito {
+  margin-bottom: 20px;
+  padding: 15px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.mensaje-info {
+  border: 1px solid #d2e8da;
+  background: #f2f8f4;
+  color: #0b7656;
+  text-align: center;
+}
+
+.mensaje-error {
+  border: 1px solid #f3b4b4;
+  background: #fff1f0;
+  color: #a32020;
+}
+
+.mensaje-exito {
+  border: 1px solid #b7ebc9;
+  background: #ecfdf3;
+  color: #176b3a;
+}
+
+
+/* ==========================================================
+   6. FORMULARIO
+========================================================== */
+
+.formulario-card {
+  width: 100%;
+  margin-bottom: 30px;
+  padding: 27px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 25px rgba(19, 75, 54, 0.055);
+}
+
+.formulario-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  padding-bottom: 19px;
+  border-bottom: 1px solid #e5efe8;
+}
+
+.formulario-icono {
+  display: grid;
+  place-items: center;
+  width: 51px;
+  height: 51px;
+  flex-shrink: 0;
+
+  border-radius: 14px;
+  background: #e6f4eb;
+  font-size: 24px;
+}
+
+.formulario-header h2 {
+  margin: 0;
+  color: #244b3b;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.formulario-header p {
+  margin: 6px 0 0;
+  color: #7b8d82;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.campos-formulario {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 8px;
+}
+
+.form-group-completa {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  color: #354f43;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.obligatorio {
+  color: #c52c37;
+}
+
+.form-group input,
+.form-group select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 47px;
+  padding: 12px 14px;
+
+  border: 1px solid #d7e5dc;
+  border-radius: 10px;
+
+  outline: none;
+  background: #fbfdfb;
+  color: #244b3b;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.form-group input::placeholder {
+  color: #8a9b90;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #0d8964;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(13, 137, 100, 0.13);
+}
+
+.form-group input.input-error,
+.form-group select.input-error {
+  border-color: #c52c37;
+  background: #fffafa;
+}
+
+.texto-ayuda {
+  color: #7b8d82;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.error-validacion {
+  color: #bd3030;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+
+/* ==========================================================
+   7. CUENTA SELECCIONADA
+========================================================== */
+
+.cuenta-seleccionada {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 13px;
+
+  padding: 16px;
+
+  border: 1px solid #b7ebc9;
+  border-radius: 13px;
+
+  background: #effaf3;
+}
+
+.cuenta-seleccionada__icono {
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+
+  border-radius: 12px;
+  background: #d9f3e4;
+  font-size: 22px;
+}
+
+.cuenta-seleccionada > div {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+}
+
+.cuenta-seleccionada strong {
+  color: #176b3a;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.cuenta-seleccionada span {
+  color: #426a50;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.cuenta-seleccionada small {
+  color: #426a50;
+  font-size: 11px;
+}
+
+.cuenta-seleccionada__estado {
+  padding: 7px 10px;
+  border-radius: 20px;
+  background: #d8f3e3;
+  color: #176b3a !important;
+  font-size: 10px !important;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   8. NOTA DE VINCULACIÓN
+========================================================== */
+
+.nota-vinculacion {
+  margin-top: 20px;
+  padding: 16px;
+
+  border-left: 4px solid #0d8964;
+  border-radius: 9px;
+
+  background: #eef7f1;
+}
+
+.nota-vinculacion strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #0b6f51;
+  font-size: 13px;
+}
+
+.nota-vinculacion p {
+  margin: 0;
+  color: #4b6659;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+
+/* ==========================================================
+   9. ACCIONES DEL FORMULARIO
+========================================================== */
+
+.form-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e5efe8;
+}
+
+.form-acciones button {
+  min-width: 150px;
+}
+
+
+/* ==========================================================
+   10. LISTADO DE VETERINARIOS
+========================================================== */
+
+.listado-section {
+  width: 100%;
+  min-width: 0;
+  padding: 26px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 25px rgba(19, 75, 54, 0.05);
+}
+
+.listado-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 23px;
+}
+
+.listado-header h2 {
+  margin: 0;
+  color: #244b3b;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.listado-header p {
+  margin: 6px 0 0;
+  color: #7b8d82;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.listado-acciones {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.total-registros {
+  padding: 8px 13px;
+  border-radius: 20px;
+  background: #e8f5ed;
+  color: #0b7656;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   11. BUSCADOR Y FILTROS
+========================================================== */
+
+.filtros-card {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+
+  margin-bottom: 25px;
+  padding: 18px;
+
+  border: 1px solid #e5efe8;
+  border-radius: 13px;
+
+  background: #faf9fe;
+}
+
+.filtro-grupo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 8px;
+}
+
+.filtro-grupo label {
+  color: #4b6659;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.filtro-grupo input,
+.filtro-grupo select {
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  padding: 10px 12px;
+
+  border: 1px solid #d7e5dc;
+  border-radius: 9px;
+
+  outline: none;
+  background: #ffffff;
+  color: #244b3b;
+
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.filtro-grupo input:focus,
+.filtro-grupo select:focus {
+  border-color: #0d8964;
+  box-shadow: 0 0 0 3px rgba(13, 137, 100, 0.12);
+}
+
+
+/* ==========================================================
+   12. TARJETAS DE VETERINARIOS
+========================================================== */
+
+.veterinarios-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 19px;
+}
+
+.veterinario-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 21px;
+
+  border: 1px solid #e5efe8;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow: 0 5px 17px rgba(19, 75, 54, 0.045);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.veterinario-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(19, 75, 54, 0.09);
+}
+
+.tarjeta-superior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.veterinario-icono {
+  display: grid;
+  place-items: center;
+  width: 49px;
+  height: 49px;
+  border-radius: 14px;
+  background: #e6f4eb;
+  font-size: 23px;
+}
+
+.etiqueta-veterinario {
+  padding: 7px 10px;
+  border-radius: 20px;
+  background: #effaf3;
+  color: #267b47;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.nombre-veterinario {
+  margin: 0 0 15px;
+  color: #244b3b;
+  font-size: 19px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   13. ESPECIALIDAD
+========================================================== */
+
+.especialidad-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 17px;
+  padding: 12px;
+
+  border-radius: 11px;
+  background: #eef7f1;
+}
+
+.especialidad-box > span {
+  font-size: 22px;
+}
+
+.especialidad-box > div {
+  display: grid;
+  gap: 4px;
+}
+
+.especialidad-box small {
+  color: #7b8d82;
+  font-size: 10px;
+}
+
+.especialidad-box strong {
+  color: #0b7656;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   14. INFORMACIÓN PROFESIONAL
+========================================================== */
+
+.veterinario-info {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 19px;
+}
+
+.info-fila {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf5ef;
+}
+
+.info-fila strong {
+  flex-shrink: 0;
+  color: #7b8d82;
+  font-size: 11px;
+}
+
+.info-fila span,
+.info-fila a {
+  max-width: 70%;
+  color: #354f43;
+  font-size: 12px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.info-fila a {
+  color: #0b7656;
+  text-decoration: none;
+}
+
+.info-fila a:hover {
+  text-decoration: underline;
+}
+
+
+/* ==========================================================
+   15. ACCIONES DE LAS TARJETAS
+========================================================== */
+
+.acciones-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #e5efe8;
+}
+
+
+/* ==========================================================
+   16. ESTADOS VACÍOS
+========================================================== */
+
+.sin-veterinarios,
+.sin-resultados {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 38px 20px;
+
+  border: 1px dashed #dcd6ef;
+  border-radius: 15px;
+
+  background: #faf9fe;
+  text-align: center;
+}
+
+.sin-icono {
+  margin-bottom: 12px;
+  font-size: 39px;
+}
+
+.sin-veterinarios h3,
+.sin-resultados h3 {
+  margin: 0;
+  color: #244b3b;
+  font-size: 17px;
+}
+
+.sin-veterinarios p,
+.sin-resultados p {
+  max-width: 450px;
+  margin: 9px 0 17px;
+  color: #7b8d82;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+
+/* ==========================================================
+   17. ACCESIBILIDAD
+========================================================== */
+
+.veterinarios-container button:focus-visible,
+.veterinarios-container input:focus-visible,
+.veterinarios-container select:focus-visible,
+.veterinarios-container a:focus-visible {
+  outline: 3px solid #0d8964;
+  outline-offset: 3px;
+}
+
+.veterinarios-container button,
+.veterinarios-container input,
+.veterinarios-container select {
+  font-family: inherit;
+}
+
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* ==========================================================
+   18. TABLET
+========================================================== */
+
+@media (max-width: 900px) {
+
+  .veterinarios-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filtros-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filtro-grupo:first-child {
+    grid-column: 1 / -1;
+  }
+
+}
+
+
+/* ==========================================================
+   19. MÓVILES
+========================================================== */
+
+@media (max-width: 600px) {
+
+  .veterinarios-header {
+    align-items: flex-start;
+    padding: 21px 17px;
+  }
+
+  .veterinarios-header h1 {
+    font-size: 22px;
+  }
+
+  .acciones-header {
+    width: 100%;
+  }
+
+  .acciones-header button {
+    flex: 1;
+  }
+
+  .resumen-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .formulario-card,
+  .listado-section {
+    padding: 18px 14px;
+  }
+
+  .formulario-header {
+    align-items: flex-start;
+  }
+
+  .formulario-header h2 {
+    font-size: 17px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-group-completa {
+    grid-column: auto;
+  }
+
+  .filtros-card {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .filtro-grupo:first-child {
+    grid-column: auto;
+  }
+
+  .veterinarios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .listado-header {
+    align-items: flex-start;
+  }
+
+  .listado-acciones {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .form-acciones {
+    flex-direction: column;
+  }
+
+  .form-acciones button {
+    width: 100%;
+  }
+
+  .cuenta-seleccionada {
+    align-items: flex-start;
+  }
+
+  .cuenta-seleccionada__estado {
+    margin-left: 56px;
+  }
+
+  .acciones-card button {
+    min-width: 0;
+  }
+
+}
+
+
+/* ==========================================================
+   20. PANTALLAS MUY PEQUEÑAS
+========================================================== */
+
+@media (max-width: 380px) {
+
+  .veterinarios-header h1 {
+    font-size: 19px;
+  }
+
+  .veterinarios-header p {
+    font-size: 12px;
+  }
+
+  .acciones-header {
+    flex-direction: column;
+  }
+
+  .acciones-header button {
+    width: 100%;
+  }
+
+  .nombre-veterinario {
+    font-size: 17px;
+  }
+
+  .acciones-card {
+    flex-direction: column;
+  }
+
+  .acciones-card button {
+    width: 100%;
+  }
+
+}
+
+
+/* ==========================================================
+   21. REDUCIR MOVIMIENTO
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .veterinarios-container *,
+  .veterinarios-container *::before,
+  .veterinarios-container *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+}
+
+/* ==========================================================
+   ACCESOS RÁPIDOS ADMINISTRATIVOS
+   Se agregan sin modificar formularios ni lógica del módulo.
+   ========================================================== */
+
+.admin-accesos {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  margin: 0 0 25px;
+  padding: 18px 20px;
+  border: 1px solid #e0ede5;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 7px 22px rgba(19, 75, 54, 0.045);
+}
+
+.admin-accesos__encabezado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-accesos__icono {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 11px;
+  background: #e6f4eb;
+  font-size: 18px;
+}
+
+.admin-accesos__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.admin-accesos__texto strong {
+  color: #183f31;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-accesos__texto small {
+  color: #71847a;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.admin-accesos__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 8px;
+}
+
+.admin-acceso {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid #dcebe2;
+  border-radius: 10px;
+  background: #f7fbf8;
+  color: #315b48;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+              color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.admin-acceso:hover {
+  transform: translateY(-1px);
+  border-color: #9acdb2;
+  background: #eaf6ee;
+  color: #075b43;
+}
+
+.admin-acceso.activo,
+.admin-acceso[aria-current="page"] {
+  border-color: #0d8964;
+  background: #0d8964;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(13, 137, 100, 0.16);
+}
+
+.admin-acceso:focus-visible {
+  outline: 3px solid rgba(13, 137, 100, 0.25);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .admin-accesos {
+    padding: 15px;
+  }
+
+  .admin-accesos__lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-acceso {
+    min-height: 40px;
+    padding: 8px 7px;
+    font-size: 11px;
+  }
+}

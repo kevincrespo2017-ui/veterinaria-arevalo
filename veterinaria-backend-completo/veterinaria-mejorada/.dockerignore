@@ -1,0 +1,14 @@
+application-local.properties
+**/application-local.properties
+.env
+.env.*
+.git
+.gitignore
+target
+**/target
+node_modules
+**/node_modules
+dist
+*.sql
+*.dump
+*.bak

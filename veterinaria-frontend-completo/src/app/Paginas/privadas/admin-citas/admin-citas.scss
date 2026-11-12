@@ -1,0 +1,1555 @@
+
+/* ==========================================================
+   VETERINARIA AREVALO
+   ADMINISTRACIÓN DE CITAS (ADMIN)
+
+   DISEÑO:
+   - Compatible con LayoutPrivado.
+   - Estadísticas por estado.
+   - Buscador y filtros.
+   - Formulario de creación y edición.
+   - Tarjetas de citas con detalles.
+   - Botones administrativos.
+   - Accesibilidad por teclado.
+   - Diseño responsivo.
+   ========================================================== */
+
+
+/* ==========================================================
+   1. CONFIGURACIÓN GENERAL
+   ========================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+:host *,
+:host *::before,
+:host *::after {
+  box-sizing: border-box;
+}
+
+
+/* ==========================================================
+   2. CONTENEDOR PRINCIPAL
+   ========================================================== */
+
+.citas-container {
+  width: 100%;
+  min-width: 0;
+
+  padding: 0;
+
+  background: transparent;
+  color: #244b3b;
+
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+
+/* ==========================================================
+   3. CABECERA
+   ========================================================== */
+
+.citas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 20px;
+
+  margin-bottom: 25px;
+  padding: 28px 30px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 25px rgba(19, 75, 54, 0.06);
+}
+
+.header-texto {
+  flex: 1;
+  min-width: 220px;
+}
+
+.etiqueta-pagina {
+  display: inline-block;
+
+  margin-bottom: 10px;
+
+  color: #0c7b5b;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.citas-header h1 {
+  margin: 0;
+
+  color: #183f31;
+
+  font-size: 29px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.citas-header p {
+  margin: 9px 0 0;
+
+  color: #6e8277;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* ==========================================================
+   4. BOTONES DE CABECERA
+   ========================================================== */
+
+.acciones-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 11px;
+}
+
+.btn-nuevo,
+.btn-volver,
+.btn-actualizar,
+.btn-guardar,
+.btn-cancelar-form,
+.btn-limpiar {
+  min-height: 44px;
+
+  padding: 11px 17px;
+
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+/* NUEVA CITA */
+
+.btn-nuevo {
+  border: 1px solid #0d8964;
+
+  background: linear-gradient(
+    135deg,
+    #0d8964,
+    #087958
+  );
+
+  color: #ffffff;
+}
+
+.btn-nuevo:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 7px 18px rgba(13, 137, 100, 0.24);
+}
+
+
+/* VOLVER */
+
+.btn-volver,
+.btn-cancelar-form {
+  border: 1px solid #dbe9e0;
+
+  background: #eef7f1;
+  color: #4b6659;
+}
+
+.btn-volver:hover,
+.btn-cancelar-form:hover:not(:disabled) {
+  background: #e2f1e8;
+}
+
+
+/* ACTUALIZAR */
+
+.btn-actualizar {
+  border: 1px solid #d2e8da;
+
+  background: #ffffff;
+  color: #0b7656;
+}
+
+.btn-actualizar:hover:not(:disabled) {
+  background: #edf7f1;
+}
+
+
+/* BOTONES DESHABILITADOS */
+
+.citas-container button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   5. ESTADÍSTICAS DE CITAS
+   ========================================================== */
+
+.resumen-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(170px, 1fr));
+
+  gap: 16px;
+
+  margin-bottom: 28px;
+}
+
+
+/* TARJETAS DE RESUMEN */
+
+.resumen-card {
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  min-width: 0;
+  padding: 20px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 17px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 7px 22px rgba(19, 75, 54, 0.05);
+}
+
+
+/* ICONOS */
+
+.resumen-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 51px;
+  height: 51px;
+
+  flex-shrink: 0;
+
+  border-radius: 15px;
+
+  font-size: 24px;
+}
+
+.icono-total {
+  background: #e6f4eb;
+}
+
+.icono-pendientes {
+  background: #fff3d8;
+}
+
+.icono-confirmadas {
+  background: #dff4f7;
+}
+
+.icono-completadas {
+  background: #e6f8ed;
+}
+
+.icono-canceladas {
+  background: #ffeaed;
+}
+
+
+/* DATOS */
+
+.resumen-datos {
+  min-width: 0;
+}
+
+.resumen-datos span {
+  display: block;
+
+  color: #6e8277;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.resumen-datos strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #244b3b;
+
+  font-size: 28px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   6. MENSAJES DEL SISTEMA
+   ========================================================== */
+
+.mensaje-info,
+.mensaje-error,
+.mensaje-exito {
+  margin-bottom: 23px;
+  padding: 15px 18px;
+
+  border-radius: 12px;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+/* CARGANDO */
+
+.mensaje-info {
+  border: 1px solid #d2e8da;
+
+  background: #ffffff;
+  color: #0b7656;
+
+  text-align: center;
+}
+
+
+/* ERROR */
+
+.mensaje-error {
+  border: 1px solid #f3b4b4;
+
+  background: #fff1f0;
+  color: #a32020;
+}
+
+
+/* ÉXITO */
+
+.mensaje-exito {
+  border: 1px solid #b7ebc9;
+
+  background: #ecfdf3;
+  color: #176b3a;
+}
+
+
+/* REINTENTAR */
+
+.btn-reintentar {
+  min-height: 35px;
+
+  margin-left: 12px;
+  padding: 7px 13px;
+
+  border: 1px solid #a32020;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #a32020;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* ==========================================================
+   7. FORMULARIO
+   ========================================================== */
+
+.formulario-card {
+  max-width: 960px;
+
+  margin: 0 auto 28px;
+  padding: 30px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 10px 30px rgba(19, 75, 54, 0.07);
+}
+
+
+/* ENCABEZADO */
+
+.formulario-header {
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  margin-bottom: 24px;
+}
+
+.formulario-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 55px;
+  height: 55px;
+
+  flex-shrink: 0;
+
+  border-radius: 15px;
+
+  background: #e6f4eb;
+
+  font-size: 26px;
+}
+
+.formulario-header h2 {
+  margin: 0;
+
+  color: #244b3b;
+
+  font-size: 22px;
+}
+
+.formulario-header p {
+  margin: 7px 0 0;
+
+  color: #6e8277;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+/* ==========================================================
+   8. ORGANIZACIÓN DEL FORMULARIO
+   ========================================================== */
+
+.campos-formulario {
+  min-width: 0;
+
+  margin: 0;
+  padding: 0;
+
+  border: none;
+}
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+.form-group {
+  min-width: 0;
+}
+
+.campo-ancho {
+  grid-column: 1 / -1;
+}
+
+
+/* ==========================================================
+   9. ETIQUETAS Y CAMPOS
+   ========================================================== */
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #354f43;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.obligatorio {
+  color: #b42332;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  display: block;
+
+  width: 100%;
+  min-height: 48px;
+
+  padding: 12px 14px;
+
+  border: 1px solid #d7e5dc;
+  border-radius: 10px;
+
+  outline: none;
+
+  background: #fbfdfb;
+  color: #244b3b;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-group textarea {
+  min-height: 105px;
+
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #7b8d82;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #0d8964;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px rgba(13, 137, 100, 0.15);
+}
+
+
+/* ==========================================================
+   10. VALIDACIONES
+   ========================================================== */
+
+.form-group .input-error {
+  border-color: #c52c37;
+
+  background: #fffafa;
+}
+
+.error-validacion {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #b42332;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.texto-ayuda {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #6e8277;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+/* ==========================================================
+   11. ACCIONES DEL FORMULARIO
+   ========================================================== */
+
+.form-acciones {
+  display: flex;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 12px;
+
+  margin-top: 27px;
+}
+
+.btn-guardar {
+  border: 1px solid #0d8964;
+
+  background: linear-gradient(
+    135deg,
+    #0d8964,
+    #087958
+  );
+
+  color: #ffffff;
+}
+
+.btn-guardar:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 7px 18px rgba(13, 137, 100, 0.25);
+}
+
+
+/* ==========================================================
+   12. ENCABEZADO DEL LISTADO
+   ========================================================== */
+
+.listado-section {
+  min-width: 0;
+}
+
+.listado-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+.listado-header h2 {
+  margin: 0;
+
+  color: #244b3b;
+
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.listado-header p {
+  margin: 7px 0 0;
+
+  color: #6e8277;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.listado-acciones {
+  display: flex;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.total-registros {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 35px;
+
+  padding: 8px 12px;
+
+  border-radius: 20px;
+
+  background: #e6f4eb;
+  color: #0b7656;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   13. BUSCADOR Y FILTROS
+   ========================================================== */
+
+.filtros-card {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 2fr)
+    minmax(170px, 1fr)
+    minmax(180px, 1fr);
+
+  gap: 18px;
+
+  margin-bottom: 25px;
+  padding: 20px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 15px;
+
+  background: #ffffff;
+}
+
+.filtro-grupo {
+  min-width: 0;
+}
+
+.filtro-grupo label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #354f43;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.filtro-grupo input,
+.filtro-grupo select {
+  display: block;
+
+  width: 100%;
+  min-height: 46px;
+
+  padding: 11px 13px;
+
+  border: 1px solid #d7e5dc;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: #fbfdfb;
+  color: #244b3b;
+
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.filtro-grupo input::placeholder {
+  color: #7b8d82;
+}
+
+.filtro-grupo input:focus,
+.filtro-grupo select:focus {
+  border-color: #0d8964;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px rgba(13, 137, 100, 0.15);
+}
+
+
+/* ==========================================================
+   14. LISTADO VACÍO O SIN RESULTADOS
+   ========================================================== */
+
+.sin-citas,
+.sin-resultados {
+  padding: 35px 25px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 17px;
+
+  background: #ffffff;
+
+  text-align: center;
+
+  box-shadow:
+    0 8px 25px rgba(19, 75, 54, 0.05);
+}
+
+.sin-icono {
+  margin-bottom: 12px;
+
+  font-size: 48px;
+}
+
+.sin-citas h3,
+.sin-resultados h3 {
+  margin: 0 0 10px;
+
+  color: #244b3b;
+
+  font-size: 20px;
+}
+
+.sin-citas p,
+.sin-resultados p {
+  max-width: 470px;
+
+  margin: 0 auto 20px;
+
+  color: #6e8277;
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.btn-limpiar {
+  border: 1px solid #0d8964;
+
+  background: #ffffff;
+  color: #0b7656;
+}
+
+.btn-limpiar:hover {
+  background: #edf7f1;
+}
+
+
+/* ==========================================================
+   15. CUADRÍCULA DE CITAS
+   ========================================================== */
+
+.citas-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(320px, 1fr));
+
+  gap: 22px;
+}
+
+
+/* ==========================================================
+   16. TARJETAS DE CITAS
+   ========================================================== */
+
+.cita-card {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  padding: 24px;
+
+  border: 1px solid #e0ede5;
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 25px rgba(19, 75, 54, 0.06);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.cita-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 13px 30px rgba(13, 116, 81, 0.12);
+}
+
+
+/* ==========================================================
+   17. CABECERA DE CADA CITA
+   ========================================================== */
+
+.cita-superior {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin-bottom: 19px;
+}
+
+.cita-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 58px;
+  height: 58px;
+
+  flex-shrink: 0;
+
+  border-radius: 15px;
+
+  background: linear-gradient(
+    135deg,
+    #e6f4eb,
+    #d8eee1
+  );
+
+  font-size: 27px;
+}
+
+.cita-identidad {
+  min-width: 0;
+}
+
+.cita-identidad h3 {
+  margin: 0 0 9px;
+
+  color: #244b3b;
+
+  font-size: 21px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   18. ESTADOS DE CITA
+   ========================================================== */
+
+.estado {
+  display: inline-block;
+
+  padding: 6px 11px;
+
+  border: 1px solid transparent;
+  border-radius: 20px;
+
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+
+/* PENDIENTE */
+
+.estado.pendiente {
+  border-color: #f0d79a;
+
+  background: #fff4d9;
+  color: #765100;
+}
+
+
+/* CONFIRMADA */
+
+.estado.confirmada {
+  border-color: #b5e5eb;
+
+  background: #e2f8fa;
+  color: #086b73;
+}
+
+
+/* COMPLETADA */
+
+.estado.completada {
+  border-color: #b6e7ca;
+
+  background: #e8faef;
+  color: #176b3a;
+}
+
+
+/* CANCELADA */
+
+.estado.cancelada {
+  border-color: #f3c0c7;
+
+  background: #ffedf0;
+  color: #a32034;
+}
+
+
+/* ==========================================================
+   19. FECHA Y MOTIVO
+   ========================================================== */
+
+.cita-info {
+  margin-bottom: 16px;
+}
+
+.info-fila {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 8px;
+
+  padding: 12px 0;
+
+  border-bottom: 1px solid #edf4ef;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.info-fila strong {
+  color: #354f43;
+
+  font-weight: 600;
+}
+
+.info-fila span {
+  max-width: 100%;
+
+  color: #657b6f;
+
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   20. BLOQUES DE INFORMACIÓN
+   ========================================================== */
+
+/*
+  Cada cita puede mostrar:
+
+  - Mascota.
+  - Propietario.
+  - Veterinario.
+  - Servicio.
+*/
+
+.bloque-info {
+  margin-bottom: 14px;
+  padding: 15px;
+
+  border: 1px solid #e6f4eb;
+  border-radius: 12px;
+
+  background: #f6faf7;
+}
+
+.bloque-info h4 {
+  margin: 0 0 12px;
+
+  color: #0b6f51;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.detalle-fila {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 8px;
+
+  padding: 8px 0;
+
+  border-bottom: 1px solid #ebe7fa;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.detalle-fila:last-child {
+  border-bottom: none;
+}
+
+.detalle-fila strong {
+  color: #354f43;
+
+  font-weight: 600;
+}
+
+.detalle-fila span {
+  max-width: 100%;
+
+  color: #657b6f;
+
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.precio-servicio {
+  color: #0b7656 !important;
+
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   21. ACCIONES ADMINISTRATIVAS
+   ========================================================== */
+
+.acciones-card {
+  display: flex;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 9px;
+
+  margin-top: auto;
+  padding-top: 15px;
+}
+
+.acciones-card button {
+  flex: 1 1 auto;
+
+  min-width: 90px;
+  min-height: 43px;
+
+  padding: 10px 12px;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+
+/* EDITAR */
+
+.btn-editar {
+  border: 1px solid #0d8964;
+
+  background: #ffffff;
+  color: #0b7656;
+}
+
+.btn-editar:hover:not(:disabled) {
+  background: #0d8964;
+  color: #ffffff;
+}
+
+
+/* CANCELAR CITA */
+
+.btn-cancelar {
+  border: 1px solid #d2a13c;
+
+  background: #fff5da;
+  color: #805d00;
+}
+
+.btn-cancelar:hover:not(:disabled) {
+  background: #a87400;
+  color: #ffffff;
+}
+
+
+/* ELIMINAR CITA */
+
+.btn-eliminar {
+  border: 1px solid #bc3045;
+
+  background: #ffffff;
+  color: #bc3045;
+}
+
+.btn-eliminar:hover:not(:disabled) {
+  background: #bc3045;
+  color: #ffffff;
+}
+
+
+/* ==========================================================
+   22. OPERACIÓN EN CURSO
+   ========================================================== */
+
+.accion-cargando {
+  margin: 12px 0 0;
+  padding: 10px;
+
+  border: 1px solid #d2e8da;
+  border-radius: 9px;
+
+  background: #f2f8f4;
+  color: #0b7656;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* ==========================================================
+   23. ACCESIBILIDAD
+   ========================================================== */
+
+/* Identifica los controles al navegar con TAB. */
+
+.citas-container button:focus-visible,
+.citas-container input:focus-visible,
+.citas-container select:focus-visible,
+.citas-container textarea:focus-visible {
+  outline: 3px solid #0d8964;
+  outline-offset: 3px;
+}
+
+
+/* Texto disponible para lectores de pantalla. */
+
+.solo-lectores {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  padding: 0;
+  margin: -1px;
+
+  overflow: hidden;
+
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+
+  border: 0;
+}
+
+
+/* ==========================================================
+   24. PANTALLAS MEDIANAS
+   ========================================================== */
+
+@media (max-width: 1250px) {
+
+  .filtros-card {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .filtro-grupo:first-child {
+    grid-column: 1 / -1;
+  }
+
+}
+
+
+/* ==========================================================
+   25. TABLETS
+   ========================================================== */
+
+@media (max-width: 800px) {
+
+  .citas-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    padding: 24px;
+  }
+
+  .acciones-header {
+    width: 100%;
+  }
+
+  .formulario-card {
+    padding: 24px;
+  }
+
+  .resumen-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* ==========================================================
+   26. CELULARES
+   ========================================================== */
+
+@media (max-width: 600px) {
+
+  .citas-header {
+    padding: 20px;
+  }
+
+  .citas-header h1 {
+    font-size: 24px;
+  }
+
+
+  /* ACCIONES DEL ENCABEZADO */
+
+  .acciones-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-nuevo,
+  .btn-volver {
+    width: 100%;
+  }
+
+
+  /* ESTADÍSTICAS */
+
+  .resumen-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .resumen-card {
+    padding: 17px;
+  }
+
+
+  /* FORMULARIO */
+
+  .formulario-card {
+    padding: 20px;
+  }
+
+  .formulario-header {
+    align-items: flex-start;
+  }
+
+  .formulario-header h2 {
+    font-size: 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .campo-ancho {
+    grid-column: auto;
+  }
+
+
+  /* BOTONES DEL FORMULARIO */
+
+  .form-acciones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-guardar,
+  .btn-cancelar-form {
+    width: 100%;
+  }
+
+
+  /* FILTROS */
+
+  .filtros-card {
+    grid-template-columns: 1fr;
+
+    padding: 16px;
+  }
+
+  .filtro-grupo:first-child {
+    grid-column: auto;
+  }
+
+
+  /* EVITAR ZOOM DE CAMPOS EN CELULARES */
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .filtro-grupo input,
+  .filtro-grupo select {
+    font-size: 16px;
+  }
+
+
+  /* LISTADO */
+
+  .listado-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .listado-acciones {
+    width: 100%;
+  }
+
+
+  /* TARJETAS */
+
+  .citas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cita-card {
+    padding: 20px;
+  }
+
+
+  /* ACCIONES DE CITA */
+
+  .acciones-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .acciones-card button {
+    width: 100%;
+  }
+
+}
+
+
+/* ==========================================================
+   27. CELULARES PEQUEÑOS
+   ========================================================== */
+
+@media (max-width: 370px) {
+
+  .citas-header,
+  .formulario-card,
+  .cita-card {
+    padding: 16px;
+  }
+
+  .citas-header h1 {
+    font-size: 22px;
+  }
+
+}
+
+
+/* ==========================================================
+   28. REDUCIR MOVIMIENTO
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .citas-container *,
+  .citas-container *::before,
+  .citas-container *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .cita-card:hover,
+  .btn-nuevo:hover,
+  .btn-guardar:hover {
+    transform: none;
+  }
+
+}
+
+/* ==========================================================
+   ACCESOS RÁPIDOS ADMINISTRATIVOS
+   Se agregan sin modificar formularios ni lógica del módulo.
+   ========================================================== */
+
+.admin-accesos {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  margin: 0 0 25px;
+  padding: 18px 20px;
+  border: 1px solid #e0ede5;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 7px 22px rgba(19, 75, 54, 0.045);
+}
+
+.admin-accesos__encabezado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-accesos__icono {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 11px;
+  background: #e6f4eb;
+  font-size: 18px;
+}
+
+.admin-accesos__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.admin-accesos__texto strong {
+  color: #183f31;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-accesos__texto small {
+  color: #71847a;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.admin-accesos__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 8px;
+}
+
+.admin-acceso {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid #dcebe2;
+  border-radius: 10px;
+  background: #f7fbf8;
+  color: #315b48;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+              color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.admin-acceso:hover {
+  transform: translateY(-1px);
+  border-color: #9acdb2;
+  background: #eaf6ee;
+  color: #075b43;
+}
+
+.admin-acceso.activo,
+.admin-acceso[aria-current="page"] {
+  border-color: #0d8964;
+  background: #0d8964;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(13, 137, 100, 0.16);
+}
+
+.admin-acceso:focus-visible {
+  outline: 3px solid rgba(13, 137, 100, 0.25);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .admin-accesos {
+    padding: 15px;
+  }
+
+  .admin-accesos__lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-acceso {
+    min-height: 40px;
+    padding: 8px 7px;
+    font-size: 11px;
+  }
+}

@@ -1,0 +1,1257 @@
+
+<!-- ==========================================================
+     VETERINARIA AREVALO
+     ADMINISTRACIÓN DE MASCOTAS (ADMIN)
+
+     FUNCIONALIDADES:
+     - Mostrar únicamente el total de mascotas.
+     - Consultar todas las mascotas registradas.
+     - Buscar por mascota, raza o propietario.
+     - Filtrar por cualquier especie registrada.
+     - Ordenar por nombre o edad.
+     - Editar los datos de una mascota.
+     - Conservar el propietario de la mascota.
+     - Eliminar mascotas con confirmación.
+     - Mostrar mensajes de éxito y error.
+     - Diseño responsivo y accesible.
+
+     IMPORTANTE:
+     El menú lateral, las notificaciones y las
+     opciones de accesibilidad ya están integradas
+     en el componente LayoutPrivado.
+     ========================================================== -->
+
+<div class="mascotas-container">
+
+
+  <!-- ========================================================
+       1. CABECERA PRINCIPAL
+       ======================================================== -->
+
+  <header class="mascotas-header">
+
+    <div class="header-texto">
+
+      <span class="etiqueta-pagina">
+        PANEL ADMINISTRATIVO
+      </span>
+
+      <h1>
+        Administración de Mascotas 🐾
+      </h1>
+
+      <p>
+        Consulta, actualiza y administra las mascotas
+        registradas en la veterinaria.
+      </p>
+
+    </div>
+
+
+    <!-- REGRESAR AL DASHBOARD ADMIN -->
+    <button
+      type="button"
+      class="btn-volver"
+      (click)="volverDashboard()"
+    >
+      ← Volver al panel
+    </button>
+
+  </header>
+
+  <!-- ========================================================
+       ACCESOS RÁPIDOS ENTRE MÓDULOS ADMINISTRATIVOS
+       Los enlaces utilizan rutas ADMIN ya existentes.
+       ======================================================== -->
+  <nav class="admin-accesos" aria-label="Accesos rápidos administrativos">
+    <div class="admin-accesos__encabezado">
+      <span class="admin-accesos__icono" aria-hidden="true">⚡</span>
+      <div class="admin-accesos__texto">
+        <strong>Accesos rápidos</strong>
+        <small>Ingresa directamente a cualquier módulo de administración.</small>
+      </div>
+    </div>
+    <div class="admin-accesos__lista">
+      <a href="/admin/dashboard" class="admin-acceso">🏠 Inicio</a>
+      <a href="/admin/usuarios" class="admin-acceso">👥 Usuarios</a>
+      <a href="/admin/mascotas" class="admin-acceso activo" aria-current="page">🐾 Mascotas</a>
+      <a href="/admin/citas" class="admin-acceso">📅 Citas</a>
+      <a href="/admin/atenciones" class="admin-acceso">🩺 Atenciones</a>
+      <a href="/admin/servicios" class="admin-acceso">🛠️ Servicios</a>
+      <a href="/admin/veterinarios" class="admin-acceso">👨‍⚕️ Veterinarios</a>
+      <a href="/admin/medicamentos" class="admin-acceso">💊 Medicamentos</a>
+      <a href="/admin/facturas" class="admin-acceso">🧾 Facturas</a>
+    </div>
+  </nav>
+
+
+
+  <!-- ========================================================
+       2. MENSAJES DEL SISTEMA
+       ======================================================== -->
+
+  <!-- MENSAJE DE ÉXITO -->
+  <div
+    class="mensaje-exito"
+    *ngIf="mensajeExito"
+    role="status"
+    aria-live="polite"
+  >
+    ✅ {{ mensajeExito }}
+  </div>
+
+
+  <!-- MENSAJE DE ERROR -->
+  <div
+    class="mensaje-error"
+    *ngIf="mensajeError"
+    role="alert"
+  >
+
+    ⚠️ {{ mensajeError }}
+
+
+    <!-- VOLVER A CONSULTAR SI FALLÓ LA CARGA -->
+    <button
+      type="button"
+      class="btn-reintentar"
+      *ngIf="errorCarga"
+      (click)="cargarMascotas()"
+    >
+      Reintentar
+    </button>
+
+  </div>
+
+
+
+<!-- ========================================================
+     RESUMEN GENERAL
+     ======================================================== -->
+
+<section
+  class="resumen-grid"
+  *ngIf="!cargando && !errorCarga"
+  aria-label="Resumen de mascotas y propietarios"
+>
+
+  <!-- TOTAL DE MASCOTAS -->
+  <article class="resumen-card">
+
+    <div class="resumen-icono" aria-hidden="true">
+      🐾
+    </div>
+
+    <div>
+      <span>Total de mascotas</span>
+
+      <strong>
+        {{ totalMascotas }}
+      </strong>
+    </div>
+
+  </article>
+
+
+  <!-- TOTAL DE PROPIETARIOS -->
+  <article class="resumen-card">
+
+    <div class="resumen-icono" aria-hidden="true">
+      👤
+    </div>
+
+    <div>
+      <span>Propietarios</span>
+
+      <strong>
+        {{ totalPropietarios }}
+      </strong>
+    </div>
+
+  </article>
+
+</section>
+
+
+
+
+  <!-- ========================================================
+       4. FORMULARIO PARA EDITAR MASCOTA
+       ======================================================== -->
+
+  <!--
+    El formulario aparece cuando el ADMIN
+    presiona el botón Editar de una mascota.
+
+    No permite cambiar el propietario.
+  -->
+
+  <section
+    class="formulario-card"
+    id="formulario-mascota"
+    *ngIf="mostrarFormulario"
+    aria-labelledby="titulo-formulario"
+  >
+
+
+    <!-- ENCABEZADO -->
+    <div class="formulario-header">
+
+      <div
+        class="formulario-icono"
+        aria-hidden="true"
+      >
+        ✏️
+      </div>
+
+
+      <div>
+
+        <h2 id="titulo-formulario">
+          Editar mascota
+        </h2>
+
+        <p>
+          Actualiza la información de la mascota
+          sin modificar su propietario.
+        </p>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         PROPIETARIO ACTUAL
+         ====================================================== -->
+
+    <div
+      class="dueno-actual"
+      *ngIf="usuarioActual"
+    >
+
+      <span aria-hidden="true">
+        👤
+      </span>
+
+
+      <div>
+
+        <strong>
+          Propietario actual
+        </strong>
+
+        <p>
+          {{
+            usuarioActual.nombre ||
+            'Sin nombre registrado'
+          }}
+        </p>
+
+        <small *ngIf="usuarioActual.correo">
+          {{ usuarioActual.correo }}
+        </small>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         FORMULARIO REACTIVO
+         ====================================================== -->
+
+    <form
+      [formGroup]="mascotaForm"
+      (ngSubmit)="guardarMascota()"
+      novalidate
+      [attr.aria-busy]="guardando"
+    >
+
+
+      <!-- Deshabilita campos mientras se guarda. -->
+      <fieldset
+        class="campos-formulario"
+        [disabled]="guardando"
+      >
+
+        <legend class="solo-lectores">
+          Datos de la mascota
+        </legend>
+
+
+
+        <div class="form-grid">
+
+
+          <!-- ================================================
+               NOMBRE
+               ================================================ -->
+
+          <div class="form-group">
+
+            <label for="nombreMascota">
+              Nombre
+              <span
+                class="obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+            </label>
+
+
+            <input
+              #campoNombre
+              id="nombreMascota"
+              type="text"
+              formControlName="nombre"
+              placeholder="Ejemplo: Rocky"
+              autocomplete="off"
+              required
+              [class.input-error]="
+                mascotaForm.get('nombre')?.touched &&
+                mascotaForm.get('nombre')?.invalid
+              "
+              [attr.aria-invalid]="
+                mascotaForm.get('nombre')?.touched &&
+                mascotaForm.get('nombre')?.invalid
+              "
+              [attr.aria-describedby]="
+                mascotaForm.get('nombre')?.touched &&
+                mascotaForm.get('nombre')?.invalid
+                  ? 'error-nombre'
+                  : null
+              "
+            >
+
+
+            <small
+              id="error-nombre"
+              class="error-validacion"
+              *ngIf="
+                mascotaForm.get('nombre')?.touched &&
+                mascotaForm.get('nombre')?.hasError('required')
+              "
+            >
+              El nombre de la mascota es obligatorio.
+            </small>
+
+          </div>
+
+
+
+          <!-- ================================================
+               ESPECIE
+               ================================================ -->
+
+          <div class="form-group">
+
+            <label for="especieMascota">
+              Especie
+              <span
+                class="obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+            </label>
+
+
+            <!--
+              Es un campo de texto libre.
+
+              Permite registrar cualquier especie:
+              perro, gato, caballo, conejo, vaca, etc.
+            -->
+
+            <input
+              id="especieMascota"
+              type="text"
+              formControlName="especie"
+              placeholder="Ejemplo: Caballo"
+              required
+              [class.input-error]="
+                mascotaForm.get('especie')?.touched &&
+                mascotaForm.get('especie')?.invalid
+              "
+              [attr.aria-invalid]="
+                mascotaForm.get('especie')?.touched &&
+                mascotaForm.get('especie')?.invalid
+              "
+              [attr.aria-describedby]="
+                mascotaForm.get('especie')?.touched &&
+                mascotaForm.get('especie')?.invalid
+                  ? 'error-especie'
+                  : null
+              "
+            >
+
+
+            <small
+              id="error-especie"
+              class="error-validacion"
+              *ngIf="
+                mascotaForm.get('especie')?.touched &&
+                mascotaForm.get('especie')?.hasError('required')
+              "
+            >
+              La especie es obligatoria.
+            </small>
+
+          </div>
+
+
+
+          <!-- ================================================
+               RAZA
+               ================================================ -->
+
+          <div class="form-group">
+
+            <label for="razaMascota">
+              Raza
+              <span
+                class="obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+            </label>
+
+
+            <input
+              id="razaMascota"
+              type="text"
+              formControlName="raza"
+              placeholder="Ejemplo: Criollo"
+              required
+              [class.input-error]="
+                mascotaForm.get('raza')?.touched &&
+                mascotaForm.get('raza')?.invalid
+              "
+              [attr.aria-invalid]="
+                mascotaForm.get('raza')?.touched &&
+                mascotaForm.get('raza')?.invalid
+              "
+              [attr.aria-describedby]="
+                mascotaForm.get('raza')?.touched &&
+                mascotaForm.get('raza')?.invalid
+                  ? 'error-raza'
+                  : null
+              "
+            >
+
+
+            <small
+              id="error-raza"
+              class="error-validacion"
+              *ngIf="
+                mascotaForm.get('raza')?.touched &&
+                mascotaForm.get('raza')?.hasError('required')
+              "
+            >
+              La raza es obligatoria.
+            </small>
+
+          </div>
+
+
+
+          <!-- ================================================
+               EDAD
+               ================================================ -->
+
+          <div class="form-group">
+
+            <label for="edadMascota">
+              Edad en años
+              <span
+                class="obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+            </label>
+
+
+            <input
+              id="edadMascota"
+              type="number"
+              min="0"
+              step="1"
+              formControlName="edad"
+              placeholder="Ejemplo: 3"
+              required
+              [class.input-error]="
+                mascotaForm.get('edad')?.touched &&
+                mascotaForm.get('edad')?.invalid
+              "
+              [attr.aria-invalid]="
+                mascotaForm.get('edad')?.touched &&
+                mascotaForm.get('edad')?.invalid
+              "
+              [attr.aria-describedby]="
+                mascotaForm.get('edad')?.touched &&
+                mascotaForm.get('edad')?.invalid
+                  ? 'error-edad'
+                  : 'ayuda-edad'
+              "
+            >
+
+
+            <small
+              id="ayuda-edad"
+              class="texto-ayuda"
+            >
+              Ingresa un número entero igual o mayor a cero.
+            </small>
+
+
+            <!-- ERRORES DE EDAD -->
+            <small
+              id="error-edad"
+              class="error-validacion"
+              *ngIf="
+                mascotaForm.get('edad')?.touched &&
+                mascotaForm.get('edad')?.invalid
+              "
+            >
+
+              <span
+                *ngIf="
+                  mascotaForm.get('edad')?.hasError('required')
+                "
+              >
+                La edad es obligatoria.
+              </span>
+
+
+              <span
+                *ngIf="
+                  mascotaForm.get('edad')?.hasError('min')
+                "
+              >
+                La edad no puede ser negativa.
+              </span>
+
+
+              <span
+                *ngIf="
+                  mascotaForm.get('edad')?.hasError('pattern')
+                "
+              >
+                La edad debe ser un número entero.
+              </span>
+
+            </small>
+
+          </div>
+
+
+
+          <!-- ================================================
+               SEXO
+               ================================================ -->
+
+          <div class="form-group campo-ancho">
+
+            <label for="sexoMascota">
+              Sexo
+              <span
+                class="obligatorio"
+                aria-hidden="true"
+              >
+                *
+              </span>
+            </label>
+
+
+            <select
+              id="sexoMascota"
+              formControlName="sexo"
+              required
+              [class.input-error]="
+                mascotaForm.get('sexo')?.touched &&
+                mascotaForm.get('sexo')?.invalid
+              "
+              [attr.aria-invalid]="
+                mascotaForm.get('sexo')?.touched &&
+                mascotaForm.get('sexo')?.invalid
+              "
+              [attr.aria-describedby]="
+                mascotaForm.get('sexo')?.touched &&
+                mascotaForm.get('sexo')?.invalid
+                  ? 'error-sexo'
+                  : null
+              "
+            >
+
+              <option value="">
+                Selecciona una opción
+              </option>
+
+              <option value="Macho">
+                Macho
+              </option>
+
+              <option value="Hembra">
+                Hembra
+              </option>
+
+            </select>
+
+
+            <small
+              id="error-sexo"
+              class="error-validacion"
+              *ngIf="
+                mascotaForm.get('sexo')?.touched &&
+                mascotaForm.get('sexo')?.hasError('required')
+              "
+            >
+              Debes seleccionar el sexo de la mascota.
+            </small>
+
+          </div>
+
+
+        </div>
+
+      </fieldset>
+
+
+
+      <!-- ====================================================
+           BOTONES DEL FORMULARIO
+           ==================================================== -->
+
+      <div class="form-acciones">
+
+
+        <!-- GUARDAR CAMBIOS -->
+        <button
+          type="submit"
+          class="btn-guardar"
+          [disabled]="guardando"
+        >
+
+          {{
+            guardando
+              ? 'Guardando cambios...'
+              : 'Guardar cambios'
+          }}
+
+        </button>
+
+
+        <!-- CANCELAR EDICIÓN -->
+        <button
+          type="button"
+          class="btn-cancelar"
+          [disabled]="guardando"
+          (click)="cerrarFormulario()"
+        >
+          Cancelar
+        </button>
+
+
+      </div>
+
+    </form>
+
+  </section>
+
+
+
+  <!-- ========================================================
+       5. ENCABEZADO DEL LISTADO
+       ======================================================== -->
+
+  <section
+    class="listado-section"
+    aria-labelledby="titulo-listado"
+  >
+
+
+    <div class="listado-header">
+
+      <div>
+
+        <h2 id="titulo-listado">
+          Mascotas registradas
+        </h2>
+
+        <p>
+          Consulta la información y el propietario
+          asignado a cada mascota.
+        </p>
+
+      </div>
+
+
+
+      <!-- TOTAL Y ACTUALIZACIÓN -->
+      <div class="listado-acciones">
+
+
+        <span
+          class="total-registros"
+          *ngIf="!cargando && !errorCarga"
+        >
+          {{ mascotas.length }}
+          {{
+            mascotas.length === 1
+              ? 'mascota'
+              : 'mascotas'
+          }}
+        </span>
+
+
+
+        <!-- ACTUALIZAR SIN RECARGAR TODA LA PÁGINA -->
+        <button
+          type="button"
+          class="btn-actualizar"
+          (click)="cargarMascotas(true)"
+          [disabled]="
+            cargando ||
+            guardando ||
+            eliminandoId !== null
+          "
+        >
+
+          {{
+            cargando
+              ? 'Consultando...'
+              : '↻ Actualizar'
+          }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         6. BUSCADOR Y FILTROS
+         ====================================================== -->
+
+    <div
+      class="filtros-card"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        mascotas.length > 0
+      "
+    >
+
+
+      <!-- ================================================
+           BUSCAR MASCOTA O PROPIETARIO
+           ================================================ -->
+
+      <div class="filtro-grupo">
+
+        <label for="buscarMascota">
+          Buscar mascota o propietario
+        </label>
+
+
+        <input
+          id="buscarMascota"
+          type="search"
+          [(ngModel)]="busqueda"
+          placeholder="Mascota, raza, propietario, correo..."
+          autocomplete="off"
+          aria-describedby="ayuda-busqueda"
+        >
+
+
+        <small
+          id="ayuda-busqueda"
+          class="texto-ayuda"
+        >
+          Puedes buscar sin distinguir mayúsculas ni tildes.
+        </small>
+
+      </div>
+
+
+
+      <!-- ================================================
+           FILTRO POR ESPECIE
+           ================================================ -->
+
+      <!--
+        Este filtro funciona para cualquier especie
+        que esté registrada en la base de datos.
+
+        No está limitado a perros y gatos.
+      -->
+
+      <div class="filtro-grupo">
+
+        <label for="filtrarEspecie">
+          Especie
+        </label>
+
+
+        <select
+          id="filtrarEspecie"
+          [(ngModel)]="filtroEspecie"
+        >
+
+          <option value="TODAS">
+            Todas las especies
+          </option>
+
+
+          <option
+            *ngFor="let especie of especiesDisponibles"
+            [value]="especie"
+          >
+            {{ especie }}
+          </option>
+
+        </select>
+
+      </div>
+
+
+
+      <!-- ================================================
+           ORDENAR MASCOTAS
+           ================================================ -->
+
+      <div class="filtro-grupo">
+
+        <label for="ordenarMascotas">
+          Ordenar mascotas
+        </label>
+
+
+        <select
+          id="ordenarMascotas"
+          [(ngModel)]="ordenarPor"
+        >
+
+          <option value="nombreAsc">
+            Nombre (A-Z)
+          </option>
+
+
+          <option value="nombreDesc">
+            Nombre (Z-A)
+          </option>
+
+
+          <option value="edadAsc">
+            Menor edad primero
+          </option>
+
+
+          <option value="edadDesc">
+            Mayor edad primero
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         7. ESTADO DE CARGA
+         ====================================================== -->
+
+    <div
+      class="mensaje-info"
+      *ngIf="cargando"
+      role="status"
+      aria-live="polite"
+    >
+      Consultando las mascotas registradas...
+    </div>
+
+
+
+    <!-- ======================================================
+         8. NO EXISTEN MASCOTAS
+         ====================================================== -->
+
+    <div
+      class="sin-mascotas"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        mascotas.length === 0
+      "
+    >
+
+      <div
+        class="sin-icono"
+        aria-hidden="true"
+      >
+        🐾
+      </div>
+
+
+      <h3>
+        No hay mascotas registradas
+      </h3>
+
+
+      <p>
+        Todavía no existen mascotas registradas
+        en el sistema.
+      </p>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         9. SIN RESULTADOS DE BÚSQUEDA
+         ====================================================== -->
+
+    <div
+      class="sin-resultados"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        mascotas.length > 0 &&
+        mascotasFiltradas.length === 0
+      "
+    >
+
+      <div
+        class="sin-icono"
+        aria-hidden="true"
+      >
+        🔎
+      </div>
+
+
+      <h3>
+        No encontramos mascotas con esos filtros
+      </h3>
+
+
+      <p>
+        Prueba otro nombre o selecciona
+        una especie diferente.
+      </p>
+
+
+      <button
+        type="button"
+        class="btn-limpiar"
+        (click)="limpiarFiltros()"
+      >
+        Limpiar filtros
+      </button>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         10. LISTADO DE MASCOTAS
+         ====================================================== -->
+
+    <div
+      class="mascotas-grid"
+      *ngIf="
+        !cargando &&
+        !errorCarga &&
+        mascotasFiltradas.length > 0
+      "
+    >
+
+
+      <!-- ====================================================
+           TARJETA INDIVIDUAL
+           ==================================================== -->
+
+      <article
+        class="mascota-card"
+        *ngFor="
+          let mascota of mascotasFiltradas;
+          trackBy: trackByMascota
+        "
+        [attr.aria-busy]="eliminandoId === mascota.id"
+      >
+
+
+
+        <!-- ================================================
+             CABECERA DE LA TARJETA
+             ================================================ -->
+
+        <div class="tarjeta-superior">
+
+
+          <!--
+            Icono según la especie.
+
+            Si es una especie no contemplada en la
+            función obtenerIcono(), se mostrará 🐾.
+          -->
+
+          <div
+            class="mascota-icono"
+            aria-hidden="true"
+          >
+            {{ obtenerIcono(mascota.especie) }}
+          </div>
+
+
+
+          <span class="etiqueta-mascota">
+            Mascota registrada
+          </span>
+
+
+        </div>
+
+
+
+        <!-- ================================================
+             NOMBRE DE LA MASCOTA
+             ================================================ -->
+
+        <h3 class="nombre-mascota">
+          {{ mascota.nombre }}
+        </h3>
+
+
+
+        <!-- ================================================
+             INFORMACIÓN DE LA MASCOTA
+             ================================================ -->
+
+        <div class="mascota-info">
+
+
+          <!-- ID -->
+          <div class="info-fila">
+
+            <strong>
+              ID
+            </strong>
+
+            <span>
+              #{{ mascota.id }}
+            </span>
+
+          </div>
+
+
+
+          <!-- ESPECIE -->
+          <div class="info-fila">
+
+            <strong>
+              Especie
+            </strong>
+
+            <span>
+              {{ mascota.especie }}
+            </span>
+
+          </div>
+
+
+
+          <!-- RAZA -->
+          <div class="info-fila">
+
+            <strong>
+              Raza
+            </strong>
+
+            <span>
+              {{ mascota.raza }}
+            </span>
+
+          </div>
+
+
+
+          <!-- EDAD -->
+          <div class="info-fila">
+
+            <strong>
+              Edad
+            </strong>
+
+            <span>
+              {{ mascota.edad }} años
+            </span>
+
+          </div>
+
+
+
+          <!-- SEXO -->
+          <div class="info-fila">
+
+            <strong>
+              Sexo
+            </strong>
+
+            <span>
+              {{ mascota.sexo }}
+            </span>
+
+          </div>
+
+
+        </div>
+
+
+
+        <!-- ================================================
+             PROPIETARIO DE LA MASCOTA
+             ================================================ -->
+
+        <div class="propietario">
+
+
+          <div class="propietario-header">
+
+            <span aria-hidden="true">
+              👤
+            </span>
+
+            <strong>
+              Propietario
+            </strong>
+
+          </div>
+
+
+
+          <!-- SI LA MASCOTA TIENE PROPIETARIO -->
+          <ng-container
+            *ngIf="mascota.usuario; else sinPropietario"
+          >
+
+
+            <!-- NOMBRE DEL PROPIETARIO -->
+            <p>
+              {{
+                mascota.usuario.nombre ||
+                'Nombre no disponible'
+              }}
+            </p>
+
+
+
+            <!-- CORREO -->
+            <small *ngIf="mascota.usuario.correo">
+              {{ mascota.usuario.correo }}
+            </small>
+
+
+
+            <!-- ID DEL USUARIO -->
+            <small
+              class="propietario-id"
+              *ngIf="mascota.usuario.id != null"
+            >
+              Usuario #{{ mascota.usuario.id }}
+            </small>
+
+
+          </ng-container>
+
+
+
+          <!-- SI NO HAY PROPIETARIO DISPONIBLE -->
+          <ng-template #sinPropietario>
+
+            <p>
+              Propietario no disponible
+            </p>
+
+          </ng-template>
+
+
+        </div>
+
+
+
+        <!-- ================================================
+             BOTONES ADMINISTRATIVOS
+             ================================================ -->
+
+        <div class="acciones-card">
+
+
+          <!-- EDITAR MASCOTA -->
+          <button
+            type="button"
+            class="btn-editar"
+            [disabled]="
+              guardando ||
+              eliminandoId !== null
+            "
+            (click)="editarMascota(mascota)"
+            [attr.aria-label]="
+              'Editar mascota ' + mascota.nombre
+            "
+          >
+            ✏️ Editar
+          </button>
+
+
+
+          <!-- ELIMINAR MASCOTA -->
+          <!--
+            Al pulsar, el TypeScript solicita
+            confirmación antes de ejecutar DELETE.
+          -->
+
+          <button
+            type="button"
+            class="btn-eliminar"
+            [disabled]="
+              guardando ||
+              eliminandoId !== null
+            "
+            (click)="eliminarMascota(mascota)"
+            [attr.aria-label]="
+              'Eliminar permanentemente a ' + mascota.nombre
+            "
+          >
+
+            {{
+              eliminandoId === mascota.id
+                ? 'Eliminando...'
+                : '🗑 Eliminar'
+            }}
+
+          </button>
+
+
+        </div>
+
+
+      </article>
+
+
+    </div>
+
+
+  </section>
+
+
+</div>
